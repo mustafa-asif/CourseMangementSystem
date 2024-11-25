@@ -2,89 +2,136 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const UserManagement = () => {
-    const [users, setUsers] = useState([]);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
+    const [Course, setCourse] = useState([]);
+    const [CourseID, setID] = useState("");
+    const [CourseName, setName] = useState("");
+    const [CreditHrTh, setCreHrTh] = useState("");
+    const [CreditHrLab, setCreHrLab] = useState("");
+    const [ProgID, setProgID] = useState("");
+    const [SemID, setSemID] = useState("");
 
-    // Fetch users from backend
-    const fetchUsers = async () => {
+    // Fetch Courses from backend
+    const fetchCourses = async () => {
         try {
-            const response = await axios.get("http://localhost:5500/api/users");
-            setUsers(response.data);
+            const response = await axios.get("http://localhost:5500/api/Admin/Course");
+            setCourse(response.data);
         } catch (error) {
-            console.error("Error fetching users:", error);
+            console.error("Error fetching Courses:", error);
         }
     };
 
-    // Add a user
-    const addUser = async () => {
+    // Add a course
+    const addCourse = async () => {
         try {
-            await axios.post("http://localhost:5500/api/users", { name, email });
-            fetchUsers(); // Refresh user list
+            await axios.post("http://localhost:5500/api/Admin/Course", { CourseID,CourseName,CreditHrTh,CreditHrLab,ProgID,SemID });
+            fetchCourses(); // Refresh course list
+            setID();
             setName("");
-            setEmail("");
+            setCreHrTh("");
+            setCreHrLab("");
+            setProgID("");
+            setSemID("");
         } catch (error) {
-            console.error("Error adding user:", error);
+            console.error("Error adding Course:", error);
         }
     };
 
-    // Delete a user
-    const deleteUser = async (userId) => {
+    // Delete a Course
+    const deleteCourse = async (CourseID) => {
         try {
-            await axios.delete(`http://localhost:5500/api/users/${userId}`);
-            fetchUsers(); // Refresh user list
+            await axios.delete(`http://localhost:5500/api/Admin/Course/${CourseID}`);
+            fetchCourses(); // Refresh user list
         } catch (error) {
             console.error("Error deleting user:", error);
         }
     };
 
     useEffect(() => {
-        fetchUsers();
+        fetchCourses();
     }, []);
 
     return (
         <div>
-            <h1>User Management</h1>
+            <h1>Course Management</h1>
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    addUser();
+                    addCourse();
                 }}
             >
                 <input
+                    type="number"
+                    placeholder="CourseID"
+                    value={CourseID}
+                    onChange={(e) => setID(e.target.value)}
+                    min={1}
+                    required
+                />
+                <input
                     type="text"
-                    placeholder="Name"
-                    value={name}
+                    placeholder="CourseName"
+                    value={CourseName}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
                 <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="Text"
+                    placeholder="CreditHrTh"
+                    value={CreditHrTh}
+                    onChange={(e) => setCreHrTh(e.target.value)}
+                    
                     required
                 />
-                <button type="submit">Add User</button>
+                <input
+                    type="Text"
+                    placeholder="CreditHrLab"
+                    value={CreditHrLab}
+                    onChange={(e) => setCreHrLab(e.target.value)}
+                    
+                    required
+                />
+                <input
+                    type="Text"
+                    placeholder="Program ID"
+                    value={ProgID}
+                    onChange={(e) => setProgID(e.target.value)}
+                    
+                    required
+                />
+                <input
+                    type="Text"
+                    placeholder="Semester ID"
+                    value={SemID}
+                    onChange={(e) => setSemID(e.target.value)}
+                    
+                    required
+                />
+                <button type="submit">Add Course</button>
             </form>
 
             <table>
                 <thead>
                     <tr>
-                        <th>UserID</th>
-                        <th>Name</th>
-                        <th>Email</th>
+                        <th>CourseID</th>
+                        <th>Course Name</th>
+                        <th>Credit Hours Theory</th>
+                        <th>Credit Hours Lab</th>
+                        <th>Semester ID</th>
+                        <th>Program ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user) => (
-                        <tr key={user.UserID}>
-                            <td>{user.UserID}</td>
-                            <td>{user.Name}</td>
-                            <td>{user.Email}</td>
+                    {Course.map((Course) => (
+                        <tr key={Course.CourseID}>
+                            <td>{Course.CourseID}</td>
+                            <td>{Course.CourseName}</td>
+                            <td>{Course.CreditHrTh}</td>
+                            <td>{Course.CreditHrLab}</td>
+                            <td>{Course.ProgID}</td>
+                            <td>{Course.SemID}</td>
                             <td>
-                                <button onClick={() => deleteUser(user.UserID)}>Delete</button>
+                                <button onClick={() => deleteCourse(Course.CourseID)}>Delete</button>
                             </td>
                         </tr>
                     ))}
