@@ -1,9 +1,21 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,make_response
 from flask_cors import CORS
 import pyodbc
 
 app = Flask(__name__)
 CORS(app)
+
+
+
+
+app.config['CORS_HEADERS'] ='*'
+
+# CORS(app, resources={r"/*": {
+#     "origins": "*",  # Allow all origins
+#     "methods": "*",  # Allow only GET and POST
+#     "allow_headers": "*"  # Specify allowed headers
+# }})
+
 
 # Database connection
 def get_connection():
@@ -15,7 +27,7 @@ def get_connection():
     )
 
 
-
+# fetch all courses
 @app.route('/api/Admin/Course', methods=['GET'])
 def fetch_Courses():
     conn = get_connection()
@@ -46,7 +58,11 @@ def add_Course():
     cursor.execute("INSERT INTO Course (CourseID, CourseName ,CreditHrTh,CreditHrLab,ProgID,SemID)  VALUES (?, ?,?,?,?,?)", (CourseID, CourseName,CreditHrTh,CreditHrLab,ProgID,SemID))
     conn.commit()
     conn.close()
-    return jsonify({"message": "Course added successfully!"}), 201
+    response = make_response(jsonify({"message": "Course added successfully!"}), 201)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    return response
 
 
 
@@ -58,7 +74,39 @@ def delete_Course(CourseID):
     cursor.execute("DELETE FROM Course WHERE CourseID = ?", (CourseID,))
     conn.commit()
     conn.close()
-    return jsonify({"message": "User deleted successfully!"})
+    return jsonify({"message": "Course deleted successfully!"})
+
+#fetch all semester
+@app.route('/api/Admin/Semester', methods=['GET'])
+def fetch_Semester():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Semester")
+    rows = cursor.fetchall()
+    conn.close()
+    Semesters = [{"SemesterID": row[0], "SemesterName": row[1]} 
+              for row in rows]
+    return jsonify(Semesters)
+
+
+#add semester
+@app.route('/api/Admin/Semester', methods=['POST'])
+def add_Semester():
+    
+    dataSem=request.json
+    SemesterID=dataSem.get('SemesterID')
+    SemesterName=dataSem.get('SemesterName')
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Semester (SemesterID, SemesterName) VALUES (?,?)", (SemesterID,SemesterName))
+    conn.commit()
+    conn.close()
+    response = make_response(jsonify({"message": "Course added successfully!"}), 201)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+    response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+    return response
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5500)

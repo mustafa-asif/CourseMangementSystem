@@ -15,6 +15,7 @@ const UserManagement = () => {
         try {
             const response = await axios.get("http://localhost:5500/api/Admin/Course");
             setCourse(response.data);
+            // console.log(setCourse(response.data));
         } catch (error) {
             console.error("Error fetching Courses:", error);
         }
@@ -23,7 +24,13 @@ const UserManagement = () => {
     // Add a course
     const addCourse = async () => {
         try {
-            await axios.post("http://localhost:5500/api/Admin/Course", { CourseID,CourseName,CreditHrTh,CreditHrLab,ProgID,SemID });
+            await axios.post("http://localhost:5500/api/Admin/Course", { CourseID,CourseName,CreditHrTh,CreditHrLab,ProgID,SemID },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'  // Set the header for JSON content
+                    }
+                }
+            );
             fetchCourses(); // Refresh course list
             setID();
             setName("");
