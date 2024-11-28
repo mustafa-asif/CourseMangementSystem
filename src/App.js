@@ -5,16 +5,16 @@ import Semester from './Frontend/Semester.jsx';
 
 function App() {
   return (
-    <>
+    <div >
     <div className="App">
       <UserManagement />
     </div>
-    <div className='APP'>
+    <div className='App'>
       <Semester />
     
     </div>
     
-    </>
+    </div>
   );
 }
 

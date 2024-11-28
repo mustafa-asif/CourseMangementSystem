@@ -123,8 +123,8 @@ const UserManagement = () => {
                         <th>Course Name</th>
                         <th>Credit Hours Theory</th>
                         <th>Credit Hours Lab</th>
-                        <th>Semester ID</th>
                         <th>Program ID</th>
+                        <th>Semester ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

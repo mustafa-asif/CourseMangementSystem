@@ -4,15 +4,15 @@ import axios from "axios";
 
 const Semester = () => {
     const [Semester, setSemester] = useState([]);
-    const [semseterID, setID] = useState("");
-    const [semesterName, setName] = useState("");
+    const [SemesterID, setID] = useState("");
+    const [SemesterName, setName] = useState("");
     
 
     // Fetch Semester from backend
     const fetchSemester = async () => {
         try {
-            const response = await axios.get("http://localhost:5500/api/Admin/Semester");
-            console.log(response);
+            const response = await axios.get("http://localhost:5500/api/Admin/Semesters");
+            // console.log(response);
             setSemester(response.data);
             // console.log(setSemester(response.data));
         } catch (error) {
@@ -23,8 +23,8 @@ const Semester = () => {
     // Add a semester
     const addSemester = async () => {
         try {
-            const recive=await axios.post("http://localhost:5500/api/Admin/Semester", 
-                { semseterID, semesterName },  // Send the data as JSON
+            const recive=await axios.post("http://localhost:5500/api/Admin/Semesters", 
+                { SemesterID, SemesterName },  // Send the data as JSON
                 {
                     headers: {
                         'Content-Type': 'application/json'  // Set the header for JSON content
@@ -42,14 +42,14 @@ const Semester = () => {
     
 
     // Delete a Course
-    // const deleteCourse = async (CourseID) => {
-    //     try {
-    //         await axios.delete(`http://localhost:5500/api/Admin/Course/${CourseID}`);
-    //         fetchCourses(); // Refresh user list
-    //     } catch (error) {
-    //         console.error("Error deleting user:", error);
-    //     }
-    // };
+    const deleteSemester = async (CourseID) => {
+        try {
+            await axios.delete(`http://localhost:5500/api/Admin/Semesters/${CourseID}`);
+            fetchSemester(); // Refresh user list
+        } catch (error) {
+            console.error("Error deleting user:", error);
+        }
+    };
 
     useEffect(() => {
         fetchSemester();
@@ -67,7 +67,7 @@ const Semester = () => {
                 <input
                     type="number"
                     placeholder="SemesterID"
-                    value={semseterID}
+                    value={SemesterID}
                     onChange={(e) => setID(e.target.value)}
                     min={1}
                     required
@@ -75,7 +75,7 @@ const Semester = () => {
                 <input
                     type="text"
                     placeholder="Semester Name"
-                    value={semesterName}
+                    value={SemesterName}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
@@ -92,13 +92,15 @@ const Semester = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {Semester.map((sem) => (
-                        <tr key={sem.semseterID}>
-                            <td>{sem.semseterID}</td>
-                            <td>{sem.semesterName}</td>
+                    {Semester.map((Semester) => (
+                        <tr key={Semester.SemesterID}>
+                            <td>{Semester.SemesterID}</td>
+                            <td>{Semester.SemesterName}</td>
                            
                             <td>
-                                <button>Delete</button>
+                                <button onClick={()=>{
+                                    deleteSemester(Semester.SemesterID);
+                                }}>Delete</button>
                             </td>
                         </tr>
                     ))}
