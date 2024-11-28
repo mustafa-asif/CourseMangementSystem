@@ -6,6 +6,8 @@ const Semester = () => {
     const [Semester, setSemester] = useState([]);
     const [SemesterID, setID] = useState("");
     const [SemesterName, setName] = useState("");
+    const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("");
     
 
     // Fetch Semester from backend
@@ -14,9 +16,12 @@ const Semester = () => {
             const response = await axios.get("http://localhost:5500/api/Admin/Semesters");
             // console.log(response);
             setSemester(response.data);
+            setLoading(false)
             // console.log(setSemester(response.data));
         } catch (error) {
             console.error("Error fetching Semester:", error);
+            setError("Error fetching Semester".error);
+            setLoading(false)
         }
     };
 
@@ -58,12 +63,16 @@ const Semester = () => {
     return (
         <div>
             <h1>Semester Management</h1>
+            {loading && <p>Loading courses...</p>}
+
+            {error && <p style={{ color: "red" }}>{error}</p>}
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
                     addSemester();
+                    // setLoading(false)
                 }}
-            >
+                >
                 <input
                     type="number"
                     placeholder="SemesterID"
@@ -71,17 +80,18 @@ const Semester = () => {
                     onChange={(e) => setID(e.target.value)}
                     min={1}
                     required
-                />
+                    />
                 <input
                     type="text"
                     placeholder="Semester Name"
                     value={SemesterName}
                     onChange={(e) => setName(e.target.value)}
                     required
-                />
+                    />
               
                 <button type="submit">Add Semester</button>
             </form>
+                    {!loading && !error && (
 
             <table>
                 <thead>
@@ -106,6 +116,7 @@ const Semester = () => {
                     ))}
                 </tbody>
             </table>
+            )}
         </div>
     );
 };

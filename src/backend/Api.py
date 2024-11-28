@@ -133,6 +133,54 @@ def delete_Semester(SemesterID):
     return jsonify({"message": "Semester deleted successfully!"})
 
 
+# return courses of same semesters
+@app.route('/api/Admin/CommonCourses', methods=['GET'])
+def fetch_common_courses():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        
+        # Execute the INNER JOIN query
+       
+        cursor.execute("""     SELECT 
+            Course.CourseID, 
+            Course.CourseName, 
+            Course.CreditHrTh, 
+            Course.CreditHrLab, 
+            Semester.SemesterID, 
+            Semester.SemesterName
+        FROM 
+            Course
+        INNER JOIN 
+            Semester
+        ON 
+            Course.SemID = Semester.SemesterID""")
+        rows = cursor.fetchall()
+        conn.close()
+
+        # Format the result into a list of dictionaries
+        common_courses = [
+            {
+                "CourseID": row[0],
+                "CourseName": row[1],
+                "CreditHrTh": row[2],
+                "CreditHrLab": row[3],
+                "SemesterID": row[4],
+                "SemesterName": row[5]
+            } for row in rows
+        ]
+
+        # Return the JSON response
+        return jsonify(common_courses), 200
+
+    except Exception as e:
+        print("Error occurred:", str(e))
+        return jsonify({"error": "Internal Server Error"}), 500
+
+
+
+
+
 
 
 
