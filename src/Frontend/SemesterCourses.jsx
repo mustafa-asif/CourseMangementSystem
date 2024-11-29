@@ -41,8 +41,8 @@ const SemesterCourses = () => {
                         <th>Course Name</th>
                         <th>Credit Hours Theory</th>
                         <th>Credit Hours Lab</th>
-                        <th>Semester Name</th>
                         <th>Semester ID</th>
+                        <th>Semester Name</th>
                         
                     </tr>
                 </thead>
