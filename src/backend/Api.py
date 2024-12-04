@@ -193,13 +193,20 @@ def fetch_common_courses():
             Course.CreditHrTh, 
             Course.CreditHrLab, 
             Semester.SemesterID, 
-            Semester.SemesterName
+            Semester.SemesterName,
+            Program.ProgID,
+            Program.ProgName     
         FROM 
             Course
         INNER JOIN 
             Semester
         ON 
-            Course.SemID = Semester.SemesterID""")
+            Course.SemID = Semester.SemesterID
+        INNER JOIN
+            Program
+        ON
+            Course.ProgID = Program.ProgID """)
+        
         rows = cursor.fetchall()
         conn.close()
 
@@ -211,7 +218,9 @@ def fetch_common_courses():
                 "CreditHrTh": row[2],
                 "CreditHrLab": row[3],
                 "SemesterID": row[4],
-                "SemesterName": row[5]
+                "SemesterName": row[5],
+                "ProgID": row[6],
+                "ProgName": row[7],
             } for row in rows
         ]
 

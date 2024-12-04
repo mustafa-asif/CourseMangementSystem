@@ -43,6 +43,8 @@ const SemesterCourses = () => {
                         <th>Credit Hours Lab</th>
                         <th>Semester ID</th>
                         <th>Semester Name</th>
+                        <th>Programm ID</th>
+                        <th>Programm Name</th>
                         
                     </tr>
                 </thead>
@@ -55,6 +57,8 @@ const SemesterCourses = () => {
                             <td>{Course.CreditHrLab}</td>
                             <td>{Course.SemesterID}</td>
                             <td>{Course.SemesterName}</td>
+                            <td>{Course.ProgID}</td>
+                            <td>{Course.ProgName}</td>
                             
                         </tr>
                     ))}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import SemesterCourses from "./SemesterCourses";
 
 const UserManagement = () => {
     const [Course, setCourse] = useState([]);
@@ -9,6 +11,19 @@ const UserManagement = () => {
     const [CreditHrLab, setCreHrLab] = useState("");
     const [ProgID, setProgID] = useState("");
     const [SemID, setSemID] = useState("");
+
+    const [showCourses,setShowCourses]=useState(false)
+
+  
+
+// routing
+    const navigate=useNavigate();
+
+    // common courses
+    const handleShowCommonCourses=()=>{
+        setShowCourses(!showCourses);
+    
+      }
 
     // Fetch Courses from backend
     const fetchCourses = async () => {
@@ -56,6 +71,15 @@ const UserManagement = () => {
     useEffect(() => {
         fetchCourses();
     }, []);
+
+    // route to add programm
+    const addProgHandler=()=>{
+        navigate('./Admin/Program')
+    }
+    const addSemHandler=()=>{
+        navigate('./Admin/Semester')
+    }
+   
 
     return (
         <div>
@@ -144,6 +168,24 @@ const UserManagement = () => {
                     ))}
                 </tbody>
             </table>
+
+            <div>
+                <button onClick={() => addProgHandler()}>Add Programm</button>
+            </div>
+            <div>
+                <button onClick={() => addSemHandler()}>Add Semester</button>
+            </div>
+
+            <div className='App'>
+      <button onClick={handleShowCommonCourses}>
+         {showCourses ?"Hide Courses":"Show Common Courses"}
+
+      </button>
+      {showCourses && <SemesterCourses />}
+    
+      
+    </div>
+           
         </div>
     );
 };

@@ -1,10 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import UserManagement from './Frontend/userManagement.jsx';
-import Semester from './Frontend/Semester.jsx';
+
 import SemesterCourses from './Frontend/SemesterCourses.jsx';
 import { useState } from 'react';
-import Programm from './Frontend/Programm.jsx';
+import AppRouter from './Route/AppRouter.jsx';
+
 function App() {
 
   const [showCourses,setShowCourses]=useState(false)
@@ -15,24 +15,13 @@ function App() {
   }
   return (
     <div >
-    <div className="App">
-      <UserManagement />
-    </div>
-    <div className='App'>
-      <Semester />
-    </div>
-    <div className='App'>
-      <Programm />
-    </div>
-    <div className='App'>
-      <button onClick={handleClick}>
-         {showCourses ?"Hide Courses":"Show Courses"}
 
-      </button>
-      {showCourses && <SemesterCourses />}
-    
-      
-    </div>
+      <div>
+        <AppRouter />
+      </div>
+
+   
+   
     
     </div>
   );
