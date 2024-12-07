@@ -1,21 +1,15 @@
 
 
 import React from 'react'
-import UserManagement from '../Frontend/userManagement';
+import Courses from '../Frontend/Courses';
 
 import Programm from '../Frontend/Programm';
 import Semester from '../Frontend/Semester';
 
-
-
-
-
-
-
     const RouteList =[
         {
             path: "/",
-            element: <UserManagement /> 
+            element: <Courses /> 
         },
       
         {

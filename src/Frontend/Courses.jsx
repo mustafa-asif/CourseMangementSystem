@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SemesterCourses from "./SemesterCourses";
 
-const UserManagement = () => {
+const Courses = () => {
     const [Course, setCourse] = useState([]);
     const [CourseID, setID] = useState("");
     const [CourseName, setName] = useState("");
@@ -190,4 +190,4 @@ const UserManagement = () => {
     );
 };
 
-export default UserManagement;
+export default Courses;
