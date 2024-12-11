@@ -76,6 +76,9 @@ const Courses = () => {
     const addProgHandler=()=>{
         navigate('./Admin/Program')
     }
+    const addStudentHandler=()=>{
+        navigate('./Admin/Student')
+    }
     const addSemHandler=()=>{
         navigate('./Admin/Semester')
     }
@@ -174,6 +177,9 @@ const Courses = () => {
             </div>
             <div>
                 <button onClick={() => addSemHandler()}>Add Semester</button>
+            </div>
+            <div>
+                <button onClick={() => addStudentHandler()}>Add Student</button>
             </div>
 
             <div className='App'>

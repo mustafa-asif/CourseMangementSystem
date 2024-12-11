@@ -232,6 +232,63 @@ def fetch_common_courses():
         return jsonify({"error": "Internal Server Error"}), 500
     
 
+#add student info
+@app.route('/api/Admin/Student', methods=['POST'])
+def add_student_info():
+    try :
+        data=request.json
+        print("recieved data ",data)
+        StudentID=data.get('StudentID')
+        StudentName=data.get('StudentName')
+        DOB=data.get('DOB')
+        Address=data.get('Address')
+        Phone=data.get('Phone')
+        CourseID=data.get('CourseID')
+        ProgID=data.get('ProgID')
+        SemID=data.get('SemID')
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO Student (StudentID,StudentName,DOB,Address,Phone,CourseID,ProgID,SemID) VALUES (?,?,?,?,?,?,?,?)",
+                        (StudentID,StudentName,DOB,Address,Phone,CourseID,ProgID,SemID))
+        conn.commit()
+        conn.close()
+        response = make_response(jsonify({"message": "Student added successfully!"}), 201)
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("access_control_allow_credentials",True)
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        return response
+    except Exception as e:
+        print("error occured:" ,str(e))
+        return jsonify({"message": "Error internal server"}), 500
+    
+
+    # fetch all students
+@app.route('/api/Admin/Student', methods=['GET'])
+def fetch_Students():
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Student")
+        rows = cursor.fetchall()
+        conn.close()
+        print(rows)
+        Students = [
+            {"StudentID": row[0], "StudentName": row[1],"DOB":row[2],
+             "Address":row[3],"Phone":row[4],"CourseID":row[5],"ProgID":row[6],
+             "SemID":row[7]
+             } 
+                for row in rows]
+        return jsonify(Students)
+
+# delete student
+@app.route('/api/Admin/Student/<int:StudentID>', methods=['DELETE'])
+def delete_Student(StudentID):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Student WHERE StudentID = ?", (StudentID,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Student deleted successfully!"})
 
 
     
