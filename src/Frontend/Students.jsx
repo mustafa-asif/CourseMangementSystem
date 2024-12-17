@@ -1,68 +1,69 @@
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SemesterCourses from "./SemesterCourses";
 
 const Students = () => {
-    const [Student,setStudent]=useState([]);
+    const [Student, setStudent] = useState([]);
     const [StudentID, setStudentID] = useState();
     const [StudentName, setStudentName] = useState("");
     const [DOB, setDOB] = useState();
     const [Address, setAddress] = useState("");
     const [Phone, setPhone] = useState("");
-    const [CourseID,setCourseID]=useState("");
+    const [CourseID, setCourseID] = useState("");
     const [ProgID, setProgID] = useState("");
     const [SemID, setSemID] = useState("");
+    const [isEditing, setIsEditing] = useState(false); // State to track edit mode
+    const [editID, setEditID] = useState(null); // Track which student is being edited
 
-    const [showCourses,setShowCourses]=useState(false)
+    const [showCourses, setShowCourses] = useState(false);
 
-  
+    const navigate = useNavigate();
 
-// routing
-    const navigate=useNavigate();
+    // Routing
+    const addCourseHandler = () => {
+        navigate("/");
+    };
 
-    const addCourseHandler=()=>{
-      navigate('/')
-  }
-
-    // common courses
-    const handleShowCommonCourses=()=>{
+    // Show Common Courses
+    const handleShowCommonCourses = () => {
         setShowCourses(!showCourses);
-    
-      }
+    };
 
     // Fetch Students from backend
     const fetchStudents = async () => {
         try {
             const response = await axios.get("http://localhost:5500/api/Admin/Student");
             setStudent(response.data);
-            // console.log(setCourse(response.data));
         } catch (error) {
             console.error("Error fetching Student:", error);
         }
     };
 
-    // Add a Student
-    const addStudent = async () => {
+    // Add or Update a Student
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const payload = { StudentID, StudentName, DOB, Address, Phone, CourseID, ProgID, SemID };
+
         try {
-            await axios.post("http://localhost:5500/api/Admin/Student", { StudentID,StudentName,DOB,Address,Phone,CourseID,ProgID,SemID },
-                {
-                    headers: {
-                        'Content-Type': 'application/json'  // Set the header for JSON content
-                    }
-                }
-            );
-            fetchStudents(); // Refresh course list
-            setStudentID();
-            setStudentName("");
-            setDOB();
-            setAddress("");
-            setPhone("");
-            setCourseID();
-            setProgID();
-            setSemID();
+            if (isEditing) {
+                // Update Student
+                await axios.put(`http://localhost:5500/api/Admin/Student/${editID}`, payload, {
+                    headers: { "Content-Type": "application/json" },
+                });
+                setIsEditing(false); // Exit edit mode
+                setEditID(null);
+            } else {
+                // Add Student
+                await axios.post("http://localhost:5500/api/Admin/Student", payload, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            fetchStudents(); // Refresh list
+            resetForm(); // Reset form after submission
         } catch (error) {
-            console.error("Error adding Students:", error);
+            console.error("Error saving student:", error);
         }
     };
 
@@ -70,34 +71,48 @@ const Students = () => {
     const deleteStudent = async (StudentID) => {
         try {
             await axios.delete(`http://localhost:5500/api/Admin/Student/${StudentID}`);
-            fetchStudents(); // Refresh user list
+            fetchStudents();
         } catch (error) {
             console.error("Error deleting Student:", error);
         }
+    };
+
+    // Edit a Student
+    const editStudent = (student) => {
+        setIsEditing(true);
+        setEditID(student.StudentID);
+        setStudentID(student.StudentID);
+        setStudentName(student.StudentName);
+        setDOB(student.DOB);
+        setAddress(student.Address);
+        setPhone(student.Phone);
+        setCourseID(student.CourseID);
+        setProgID(student.ProgID);
+        setSemID(student.SemID);
+    };
+
+    // Reset Form
+    const resetForm = () => {
+        setStudentID("");
+        setStudentName("");
+        setDOB("");
+        setAddress("");
+        setPhone("");
+        setCourseID("");
+        setProgID("");
+        setSemID("");
+        setIsEditing(false);
+        setEditID(null);
     };
 
     useEffect(() => {
         fetchStudents();
     }, []);
 
-    // route to add programm
-    // const addProgHandler=()=>{
-    //     navigate('./Admin/Program')
-    // }
-    // const addSemHandler=()=>{
-    //     navigate('./Admin/Semester')
-    // }
-   
-
     return (
         <div>
             <h1>Student Management</h1>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    addStudent();
-                }}
-            >
+            <form onSubmit={handleSubmit}>
                 <input
                     type="number"
                     placeholder="StudentID"
@@ -105,6 +120,7 @@ const Students = () => {
                     onChange={(e) => setStudentID(e.target.value)}
                     min={1}
                     required
+                    disabled={isEditing} // Disable ID when editing
                 />
                 <input
                     type="text"
@@ -114,27 +130,24 @@ const Students = () => {
                     required
                 />
                 <input
-                    type="Date"
-                    placeholder="Date of birth"
+                    type="date"
+                    placeholder="Date of Birth"
                     value={DOB}
                     onChange={(e) => setDOB(e.target.value)}
-                    
                     required
                 />
                 <input
-                    type="Text"
+                    type="text"
                     placeholder="Address"
                     value={Address}
                     onChange={(e) => setAddress(e.target.value)}
-                    
                     required
                 />
                 <input
-                    type="Text"
-                    placeholder="Contact number"
+                    type="text"
+                    placeholder="Contact Number"
                     value={Phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    
                     required
                 />
                 <input
@@ -142,15 +155,13 @@ const Students = () => {
                     placeholder="Course ID"
                     value={CourseID}
                     onChange={(e) => setCourseID(e.target.value)}
-                    
                     required
                 />
                 <input
                     type="number"
-                    placeholder="Programm  ID"
+                    placeholder="Program ID"
                     value={ProgID}
                     onChange={(e) => setProgID(e.target.value)}
-                    
                     required
                 />
                 <input
@@ -158,10 +169,10 @@ const Students = () => {
                     placeholder="Semester ID"
                     value={SemID}
                     onChange={(e) => setSemID(e.target.value)}
-                    
                     required
                 />
-                <button type="submit">Add Student</button>
+                <button type="submit">{isEditing ? "Update Student" : "Add Student"}</button>
+                {isEditing && <button onClick={resetForm}>Cancel</button>}
             </form>
 
             <table>
@@ -175,22 +186,23 @@ const Students = () => {
                         <th>CourseID</th>
                         <th>Program ID</th>
                         <th>Semester ID</th>
-                        {/* <th>Actions</th> */}
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {Student.map((Student) => (
-                        <tr key={Student.StudentID}>
-                            <td>{Student.StudentID}</td>
-                            <td>{Student.StudentName}</td>
-                            <td>{Student.DOB}</td>
-                            <td>{Student.Address}</td>
-                            <td>{Student.Phone}</td>
-                            <td>{Student.CourseID}</td>
-                            <td>{Student.ProgID}</td>
-                            <td>{Student.SemID}</td>
+                    {Student.map((student) => (
+                        <tr key={student.StudentID}>
+                            <td>{student.StudentID}</td>
+                            <td>{student.StudentName}</td>
+                            <td>{student.DOB}</td>
+                            <td>{student.Address}</td>
+                            <td>{student.Phone}</td>
+                            <td>{student.CourseID}</td>
+                            <td>{student.ProgID}</td>
+                            <td>{student.SemID}</td>
                             <td>
-                                <button onClick={() => deleteStudent(Student.StudentID)}>Delete</button>
+                                <button onClick={() => editStudent(student)}>Edit</button>
+                                <button onClick={() => deleteStudent(student.StudentID)}>Delete</button>
                             </td>
                         </tr>
                     ))}
@@ -198,24 +210,18 @@ const Students = () => {
             </table>
 
             <div>
-                <button onClick={() => (addCourseHandler())}>Add Course</button>
+                <button onClick={() => addCourseHandler()}>Add Course</button>
             </div>
-            {/* <div>
-                <button onClick={() => addSemHandler()}>Add Semester</button>
-            </div> */}
 
-            <div className='App'>
-      <button onClick={handleShowCommonCourses}>
-         {showCourses ?"Hide Courses":"Show Common Courses"}
-
-      </button>
-      {showCourses && <SemesterCourses />}
-    
-      
-    </div>
-           
+            <div className="App">
+                <button onClick={handleShowCommonCourses}>
+                    {showCourses ? "Hide Courses" : "Show  Courses"}
+                </button>
+                {showCourses && <SemesterCourses />}
+            </div>
         </div>
     );
 };
 
 export default Students;
+

@@ -256,7 +256,7 @@ def add_student_info():
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("access_control_allow_credentials",True)
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS,PUT")
         return response
     except Exception as e:
         print("error occured:" ,str(e))
@@ -279,6 +279,30 @@ def fetch_Students():
              } 
                 for row in rows]
         return jsonify(Students)
+
+
+# Update an existing student
+@app.route('/api/Admin/Student/<int:StudentID>', methods=['PUT'])
+def update_student(StudentID):
+    data = request.json
+    StudentName = data.get('StudentName')
+    DOB = data.get('DOB')
+    Address = data.get('Address')
+    Phone = data.get('Phone')
+    CourseID = data.get('CourseID')
+    ProgID = data.get('ProgID')
+    SemID = data.get('SemID')
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE Student SET StudentName = ?, DOB = ?, Address = ?, Phone = ?, CourseID = ?, ProgID = ?, SemID = ? WHERE StudentID = ?", 
+        (StudentName, DOB, Address, Phone, CourseID, ProgID, SemID, StudentID)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"message": f"Student {StudentID} updated successfully!"})
 
 # delete student
 @app.route('/api/Admin/Student/<int:StudentID>', methods=['DELETE'])
