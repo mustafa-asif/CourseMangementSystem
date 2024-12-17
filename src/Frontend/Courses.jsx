@@ -11,6 +11,7 @@ const Courses = () => {
     const [CreditHrLab, setCreHrLab] = useState("");
     const [ProgID, setProgID] = useState("");
     const [SemID, setSemID] = useState("");
+    const [TeacherID,setTeacherID]=useState("");
 
     const [showCourses,setShowCourses]=useState(false)
 
@@ -53,6 +54,7 @@ const Courses = () => {
             setCreHrLab("");
             setProgID("");
             setSemID("");
+            setTeacherID("");
         } catch (error) {
             console.error("Error adding Course:", error);
         }
@@ -81,6 +83,9 @@ const Courses = () => {
     }
     const addSemHandler=()=>{
         navigate('./Admin/Semester')
+    }
+    const addTeacherHandler=()=>{
+        navigate('./Admin/Teacher')
     }
    
 
@@ -140,6 +145,14 @@ const Courses = () => {
                     
                     required
                 />
+                <input
+                    type="number"
+                    placeholder="Teacher ID"
+                    value={TeacherID}
+                    onChange={(e) => setTeacherID(e.target.value)}
+                    
+                    required
+                />
                 <button type="submit">Add Course</button>
             </form>
 
@@ -152,6 +165,7 @@ const Courses = () => {
                         <th>Credit Hours Lab</th>
                         <th>Program ID</th>
                         <th>Semester ID</th>
+                        <th>Teacher ID</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -164,6 +178,7 @@ const Courses = () => {
                             <td>{Course.CreditHrLab}</td>
                             <td>{Course.ProgID}</td>
                             <td>{Course.SemID}</td>
+                            <td>{Course.TeacherID}</td>
                             <td>
                                 <button onClick={() => deleteCourse(Course.CourseID)}>Delete</button>
                             </td>
@@ -180,6 +195,9 @@ const Courses = () => {
             </div>
             <div>
                 <button onClick={() => addStudentHandler()}>Add Student</button>
+            </div>
+            <div>
+                <button onClick={() => addTeacherHandler()}>Add Teacher</button>
             </div>
 
             <div className='App'>

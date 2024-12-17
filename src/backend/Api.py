@@ -36,7 +36,7 @@ def fetch_Courses():
     rows = cursor.fetchall()
     conn.close()
     Courses = [{"CourseID": row[0], "CourseName": row[1], "CreditHrTh": row[2],"CreditHrLab":row[3],
-              "ProgID":row[4],"SemID":row[5]} 
+              "ProgID":row[4],"SemID":row[5],"TeacherID" : row[6]} 
               for row in rows]
     return jsonify(Courses)
 
@@ -55,10 +55,11 @@ def add_Course():
         CreditHrLab = data.get('CreditHrLab')
         ProgID = data.get('ProgID')
         SemID = data.get('SemID')
+        TeacherID =data.get('TeacherID')
 
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Course (CourseID, CourseName ,CreditHrTh,CreditHrLab,ProgID,SemID)  VALUES (?, ?,?,?,?,?)", (CourseID, CourseName,CreditHrTh,CreditHrLab,ProgID,SemID))
+        cursor.execute("INSERT INTO Course (CourseID, CourseName ,CreditHrTh,CreditHrLab,ProgID,SemID,TeacherID)  VALUES (?, ?,?,?,?,?,?)", (CourseID, CourseName,CreditHrTh,CreditHrLab,ProgID,SemID,TeacherID))
         conn.commit()
         conn.close()
         response = make_response(jsonify({"message": "Course added successfully!"}), 201)
@@ -189,12 +190,10 @@ def fetch_common_courses():
        
         cursor.execute("""     SELECT 
             Course.CourseID, 
-            Course.CourseName, 
-            Course.CreditHrTh, 
-            Course.CreditHrLab, 
-            Semester.SemesterID, 
+            Course.CourseName,
+            Teacher.TeacherName,
+            Teacher.Job                        
             Semester.SemesterName,
-            Program.ProgID,
             Program.ProgName     
         FROM 
             Course
@@ -205,7 +204,11 @@ def fetch_common_courses():
         INNER JOIN
             Program
         ON
-            Course.ProgID = Program.ProgID """)
+            Course.ProgID = Program.ProgID
+        INNER JOIN
+            Teacher
+        ON
+            Course.CourseID = Teacher.CourseID """)
         
         rows = cursor.fetchall()
         conn.close()
@@ -215,12 +218,10 @@ def fetch_common_courses():
             {
                 "CourseID": row[0],
                 "CourseName": row[1],
-                "CreditHrTh": row[2],
-                "CreditHrLab": row[3],
-                "SemesterID": row[4],
-                "SemesterName": row[5],
-                "ProgID": row[6],
-                "ProgName": row[7],
+                "TeacherName": row[2],
+                "Job": row[3],
+                "SemesterName": row[4],
+                "ProgName": row[5]
             } for row in rows
         ]
 
@@ -313,6 +314,92 @@ def delete_Student(StudentID):
     conn.commit()
     conn.close()
     return jsonify({"message": "Student deleted successfully!"})
+
+
+
+# Fetch all teachers
+@app.route('/api/Admin/teachers', methods=['GET'])
+def fetch_teachers():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Teacher")
+    rows = cursor.fetchall()
+    conn.close()
+    teachers = [
+        {
+            
+            "TeacherID": row[0],
+            "TeacherName": row[1],
+            "DOJ": row[2],
+            "Status": row[3],
+            "Salary": row[4],
+            "Job": row[5],
+            "CourseID": row[6],
+            "ProgID": row[7],
+            "SemID": row[8],
+        }
+        for row in rows
+    ]
+    return jsonify(teachers)
+
+# Add a new teacher
+@app.route('/api/Admin/teachers', methods=['POST'])
+def add_teacher():
+    data = request.json
+    TeacherID = data.get('TeacherID')
+    TeacherName = data.get('TeacherName')
+    DOJ = data.get('DOJ')  # Date of Joining
+    Status = data.get('Status')
+    Salary = data.get('Salary')
+    Job = data.get('Job')
+    CourseID = data.get('CourseID')
+    ProgID = data.get('ProgID')  # Program ID
+    SemID = data.get('SemID')  # Semester ID
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO Teacher (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID,ProgID, SemID ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, ProgID, SemID )
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"message": "Teacher added successfully!"}), 201
+
+# Update an existing teacher
+@app.route('/api//Admin/teachers/<int:TeacherID>', methods=['PUT'])
+def update_teacher(TeacherID):
+    data = request.json
+    CourseID = data.get('CourseID')
+    TeacherName = data.get('TeacherName')
+    DOJ = data.get('DOJ')
+    Status = data.get('Status')
+    Salary = data.get('Salary')
+    Job = data.get('Job')
+    ProgID=data.get('ProgID')
+    SemID=data.get('SemID')
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE Teacher SET TeacherName = ?, DOJ = ?, Status = ?, Salary = ?, Job = ?,  CourseID = ?, SemID=?, ProgID=? WHERE TeacherID = ?", 
+        (TeacherName, DOJ, Status, Salary, Job, CourseID,ProgID,SemID, TeacherID)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify({"message": f"Teacher {TeacherID} updated successfully!"})
+
+# Delete a teacher
+@app.route('/api/Admin/teachers/<int:TeacherID>', methods=['DELETE'])
+def delete_teacher(TeacherID):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Teacher WHERE TeacherID = ?", (TeacherID,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Teacher deleted successfully!"})
 
 
     

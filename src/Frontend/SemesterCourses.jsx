@@ -39,11 +39,9 @@ const SemesterCourses = () => {
                     <tr>
                         <th>CourseID</th>
                         <th>Course Name</th>
-                        <th>Credit Hours Theory</th>
-                        <th>Credit Hours Lab</th>
-                        <th>Semester ID</th>
+                        <th>Teacher Name</th>
+                        <th>Teacher Profession</th>
                         <th>Semester Name</th>
-                        <th>Programm ID</th>
                         <th>Programm Name</th>
                         
                     </tr>
@@ -53,11 +51,11 @@ const SemesterCourses = () => {
                         <tr key={Course.CourseID}>
                             <td>{Course.CourseID}</td>
                             <td>{Course.CourseName}</td>
-                            <td>{Course.CreditHrTh}</td>
-                            <td>{Course.CreditHrLab}</td>
-                            <td>{Course.SemesterID}</td>
+                            <td>{Course.TeacherName}</td>
+                            <td>{Course.Job}</td>
+                            
                             <td>{Course.SemesterName}</td>
-                            <td>{Course.ProgID}</td>
+                            
                             <td>{Course.ProgName}</td>
                             
                         </tr>
