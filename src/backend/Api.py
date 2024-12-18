@@ -192,7 +192,7 @@ def fetch_common_courses():
             Course.CourseID, 
             Course.CourseName,
             Teacher.TeacherName,
-            Teacher.Job                        
+            Teacher.Job,                      
             Semester.SemesterName,
             Program.ProgName     
         FROM 

@@ -11,7 +11,7 @@ const Courses = () => {
     const [CreditHrLab, setCreHrLab] = useState("");
     const [ProgID, setProgID] = useState("");
     const [SemID, setSemID] = useState("");
-    const [TeacherID,setTeacherID]=useState("");
+    const [TeacherID, setTeacherID]= useState("");
 
     const [showCourses,setShowCourses]=useState(false)
 
@@ -146,7 +146,7 @@ const Courses = () => {
                     required
                 />
                 <input
-                    type="number"
+                    type="text"
                     placeholder="Teacher ID"
                     value={TeacherID}
                     onChange={(e) => setTeacherID(e.target.value)}
