@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterCourse = () => {
   const [courses, setCourses] = useState([]);
@@ -7,6 +8,18 @@ const RegisterCourse = () => {
   const [StudentID, setStudentID] = useState("");
   // const [StuCourseID, setStuCourseID]= useState("");
   const [message, setMessage] = useState("");
+
+  // navigate too View Courses
+  const navigate =useNavigate();
+
+  const handleViewCourses=()=>{
+    navigate("/Student/viewCourses");
+  }
+
+  // naviagate to home page
+  const handlerBackHome=()=>{
+    navigate('/');
+  }
 
   // Fetch available courses
   const fetchAvailableCourses = async () => {
@@ -35,13 +48,16 @@ const RegisterCourse = () => {
 
   // Handle course registration
   const handleRegistration = async () => {
-    if (!StudentID || selectedCourses.length === 0) {
-      setMessage("Please provide a Student ID and select at least one course.");
+    if (!StudentID ) {
+      setMessage("Please provide a valid Student ID ");
       return;
+    }
+    else if(selectedCourses.length === 0){
+      setMessage(" select at least one course.");
     }
 
     const payload = {
-       // Generate a random ID for demonstration
+       
       StudentID: StudentID,
       CourseID: selectedCourses,
     };
@@ -70,15 +86,7 @@ const RegisterCourse = () => {
           style={{ marginLeft: "10px", padding: "5px" }}
         />
       </div>
-      {/* <div>
-        <label>StudentCourse ID:</label>
-        <input
-          type="text"
-          value={StuCourseID}
-          onChange={(e) => setStuCourseID(e.target.value)}
-          style={{ marginLeft: "10px", padding: "5px" }}
-        />
-      </div> */}
+     
 
       {/* Courses List */}
       <h2>Available Courses</h2>
@@ -107,6 +115,13 @@ const RegisterCourse = () => {
 
       {/* Message */}
       {message && <p style={{ marginTop: "20px", color: "blue" }}>{message}</p>}
+
+      <div>
+        <button onClick={handleViewCourses}>View Registerd Courses</button>
+      </div>
+      <div>
+        <button onClick={handlerBackHome}>Back to Login</button>
+      </div>
     </div>
   );
 };

@@ -1,33 +1,17 @@
-import logo from './logo.svg';
-import './App.css';
 
-import SemesterCourses from './Frontend/SemesterCourses.jsx';
+import './App.css';
 import { useState } from 'react';
 import AppRouter from './Route/AppRouter.jsx';
-import RegisterCourse from './Frontend/StudentPortal/RegisterCourse.jsx';
+
 
 function App() {
-
-  const [showCourses,setShowCourses]=useState(false)
-
-  const handleClick=()=>{
-    setShowCourses(!showCourses);
-
-  }
   return (
     <div >
 
       <div>
-        <AppRouter />
+        <AppRouter />;
       </div>
 
-      <div>
-        <RegisterCourse />
-      </div>
-
-   
-   
-    
     </div>
   );
 }

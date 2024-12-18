@@ -78,14 +78,24 @@ const Courses = () => {
     const addProgHandler=()=>{
         navigate('./Admin/Program')
     }
+
+    // route to add Student
     const addStudentHandler=()=>{
         navigate('./Admin/Student')
     }
+
+    // route to add Semester
     const addSemHandler=()=>{
         navigate('./Admin/Semester')
     }
+    // route to add Teacher
     const addTeacherHandler=()=>{
         navigate('./Admin/Teacher')
+    }
+
+    // Route to Home Page
+    const homeHandler=()=>{
+        navigate('/');
     }
    
 
@@ -198,6 +208,9 @@ const Courses = () => {
             </div>
             <div>
                 <button onClick={() => addTeacherHandler()}>Add Teacher</button>
+            </div>
+            <div>
+                <button onClick={() => homeHandler()}>Back to Login</button>
             </div>
 
             <div className='App'>

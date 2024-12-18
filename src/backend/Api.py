@@ -456,7 +456,7 @@ def RegisterCourses():
             }), 201
         except Exception as e:
             conn.rollback()
-            return jsonify({"message": f"Error registering courses: {str(e)}"}), 500
+            return jsonify({"message": f"Error registering courses:"}), 500
         finally:
             conn.close() 
 
@@ -466,6 +466,12 @@ def RegisterCourses():
 def view_student_courses():
     conn = get_connection()
     cursor = conn.cursor()
+    
+    # Get StudentID from query parameters
+    student_id = request.args.get('StudentID')
+    
+    if not student_id:
+        return jsonify({"message": "StudentID is required as a query parameter!"}), 400
     
     # Query to get student information and their registered courses
     cursor.execute("""
@@ -488,91 +494,38 @@ def view_student_courses():
             Program ON Course.ProgID = Program.ProgID
         INNER JOIN
             Semester ON Course.SemID = Semester.SemesterID
-        
-        ORDER BY Student.StudentID
-    """)
+        WHERE
+            Student.StudentID = ?
+    """, (student_id,))
+    
     rows = cursor.fetchall()
     conn.close()
     
+    if not rows:
+        return jsonify({"message": "No courses found for the specified StudentID."}), 404
+    
     # Group courses by student ID
-    student_courses = {}
+    student_courses = {
+        "StudentID": rows[0][0],
+        "StudentName": rows[0][1],
+        "Courses": [],
+        "Program": rows[0][6],
+        "Semester": rows[0][7]
+    }
+    
     for row in rows:
-        StudentID = row[0]
-        StudentName = row[1]
         course_details = {
             "CourseID": row[2],
             "CourseName": row[3],
             "CreditHrTh": row[4],
             "CreditHrLab": row[5]
         }
-        ProgName = row[6]
-        SemesterName = row[7]
-        if StudentID not in student_courses:
-            student_courses[StudentID] = {
-                "StudentName": StudentName,
-                "Courses": [],
-                "Program": ProgName,
-                "Semester": SemesterName
-            }
-        student_courses[StudentID]["Courses"].append(course_details)
+        student_courses["Courses"].append(course_details)
     
-    # Convert to a list for JSON response
-    result = [
-        {
-            "StudentID": StudentID,
-            "StudentName": student_info["StudentName"],
-            "Courses": student_info["Courses"],
-            "Program": student_info["Program"],
-            "Semester": student_info["Semester"]
-        }
-        for StudentID, student_info in student_courses.items()
-    ]
-    
-    return jsonify(result)            
-
-#     # Endpoint to register courses for a student
-# @app.route('/api/Student/RegisterCourses', methods=['POST'])
-# def register_course():
-#     data = request.json
-#     student_id = data.get('student_id')
-#     course_ids = data.get('course_ids')
-    
-#     if not student_id or not course_ids:
-#         return jsonify({"message": "Invalid data, student_id and course_ids are required"}), 400
-    
-#     conn = get_connection()
-#     cursor = conn.cursor()
-    
-#     # Insert course registrations into the 'StudentCourse' table (or whatever table you're using)
-#     for course_id in course_ids:
-#         cursor.execute("INSERT INTO StudentCourse (StudentID, CourseID) VALUES (?, ?)", (student_id, course_id))
-    
-#     conn.commit()
-#     conn.close()
-    
-#     return jsonify({"message": "Courses registered successfully!"}), 201
+    return jsonify(student_courses)
+          
 
 
-# Endpoint to fetch all registered courses for a student
-# @app.route('/api/Student/RegisterCourses/<int:student_id>', methods=['GET'])
-# def get_student_courses(student_id):
-#     conn = get_connection()
-#     cursor = conn.cursor()
-    
-#     # Fetch courses registered by the student
-#     cursor.execute("""
-#         SELECT c.CourseID, c.Name 
-#         FROM Course c 
-#         JOIN StudentCourse sc ON c.CourseID = sc.CourseID 
-#         WHERE sc.StudentID = ?
-#     """, (student_id,))
-    
-#     courses = cursor.fetchall()
-#     conn.close()
-    
-#     # Convert rows into a list of dictionaries
-#     registered_courses = [{"CourseID": row[0], "Name": row[1]} for row in courses]
-#     return jsonify(registered_courses)
 
 
 
