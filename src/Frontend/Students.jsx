@@ -11,7 +11,7 @@ const Students = () => {
     const [DOB, setDOB] = useState();
     const [Address, setAddress] = useState("");
     const [Phone, setPhone] = useState("");
-    const [CourseID, setCourseID] = useState("");
+    
     const [ProgID, setProgID] = useState("");
     const [SemID, setSemID] = useState("");
     const [isEditing, setIsEditing] = useState(false); // State to track edit mode
@@ -44,7 +44,7 @@ const Students = () => {
     // Add or Update a Student
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = { StudentID, StudentName, DOB, Address, Phone, CourseID, ProgID, SemID };
+        const payload = { StudentID, StudentName, DOB, Address, Phone, ProgID, SemID };
 
         try {
             if (isEditing) {
@@ -86,7 +86,7 @@ const Students = () => {
         setDOB(student.DOB);
         setAddress(student.Address);
         setPhone(student.Phone);
-        setCourseID(student.CourseID);
+    
         setProgID(student.ProgID);
         setSemID(student.SemID);
     };
@@ -98,7 +98,7 @@ const Students = () => {
         setDOB("");
         setAddress("");
         setPhone("");
-        setCourseID("");
+        
         setProgID("");
         setSemID("");
         setIsEditing(false);
@@ -150,13 +150,7 @@ const Students = () => {
                     onChange={(e) => setPhone(e.target.value)}
                     required
                 />
-                <input
-                    type="number"
-                    placeholder="Course ID"
-                    value={CourseID}
-                    onChange={(e) => setCourseID(e.target.value)}
-                    required
-                />
+              
                 <input
                     type="number"
                     placeholder="Program ID"
@@ -183,7 +177,7 @@ const Students = () => {
                         <th>Date of Birth</th>
                         <th>Address</th>
                         <th>Contact Number</th>
-                        <th>CourseID</th>
+                        
                         <th>Program ID</th>
                         <th>Semester ID</th>
                         <th>Actions</th>
@@ -197,7 +191,7 @@ const Students = () => {
                             <td>{student.DOB}</td>
                             <td>{student.Address}</td>
                             <td>{student.Phone}</td>
-                            <td>{student.CourseID}</td>
+                            
                             <td>{student.ProgID}</td>
                             <td>{student.SemID}</td>
                             <td>

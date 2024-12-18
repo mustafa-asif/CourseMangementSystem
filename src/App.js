@@ -4,6 +4,7 @@ import './App.css';
 import SemesterCourses from './Frontend/SemesterCourses.jsx';
 import { useState } from 'react';
 import AppRouter from './Route/AppRouter.jsx';
+import RegisterCourse from './Frontend/StudentPortal/RegisterCourse.jsx';
 
 function App() {
 
@@ -18,6 +19,10 @@ function App() {
 
       <div>
         <AppRouter />
+      </div>
+
+      <div>
+        <RegisterCourse />
       </div>
 
    

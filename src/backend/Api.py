@@ -244,13 +244,13 @@ def add_student_info():
         DOB=data.get('DOB')
         Address=data.get('Address')
         Phone=data.get('Phone')
-        CourseID=data.get('CourseID')
+        
         ProgID=data.get('ProgID')
         SemID=data.get('SemID')
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO Student (StudentID,StudentName,DOB,Address,Phone,CourseID,ProgID,SemID) VALUES (?,?,?,?,?,?,?,?)",
-                        (StudentID,StudentName,DOB,Address,Phone,CourseID,ProgID,SemID))
+        cursor.execute("INSERT INTO Student (StudentID,StudentName,DOB,Address,Phone,ProgID,SemID) VALUES (?,?,?,?,?,?,?)",
+                        (StudentID,StudentName,DOB,Address,Phone,ProgID,SemID))
         conn.commit()
         conn.close()
         response = make_response(jsonify({"message": "Student added successfully!"}), 201)
@@ -275,8 +275,8 @@ def fetch_Students():
         print(rows)
         Students = [
             {"StudentID": row[0], "StudentName": row[1],"DOB":row[2],
-             "Address":row[3],"Phone":row[4],"CourseID":row[5],"ProgID":row[6],
-             "SemID":row[7]
+             "Address":row[3],"Phone":row[4],"ProgID":row[5],
+             "SemID":row[6]
              } 
                 for row in rows]
         return jsonify(Students)
@@ -290,15 +290,15 @@ def update_student(StudentID):
     DOB = data.get('DOB')
     Address = data.get('Address')
     Phone = data.get('Phone')
-    CourseID = data.get('CourseID')
+
     ProgID = data.get('ProgID')
     SemID = data.get('SemID')
     
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute(
-        "UPDATE Student SET StudentName = ?, DOB = ?, Address = ?, Phone = ?, CourseID = ?, ProgID = ?, SemID = ? WHERE StudentID = ?", 
-        (StudentName, DOB, Address, Phone, CourseID, ProgID, SemID, StudentID)
+        "UPDATE Student SET StudentName = ?, DOB = ?, Address = ?, Phone = ?, ProgID = ?, SemID = ? WHERE StudentID = ?", 
+        (StudentName, DOB, Address, Phone, ProgID, SemID, StudentID)
     )
     conn.commit()
     conn.close()
@@ -402,7 +402,133 @@ def delete_teacher(TeacherID):
     return jsonify({"message": "Teacher deleted successfully!"})
 
 
+
+
+# Get courses and register courses
+@app.route('/api/Student/RegisterCourses', methods=['GET', 'POST'])
+def RegisterCourses():
+    conn = get_connection()
+    cursor = conn.cursor()
     
+    if request.method == 'GET':
+        # Fetch all courses from the Course table
+        cursor.execute("SELECT CourseID, CourseName FROM Course")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        # Return courses as JSON
+        courses = [{"CourseID": row[0], "CourseName": row[1]} for row in rows]
+        return jsonify(courses)
+    
+    elif request.method == 'POST':
+        # Register courses for a student
+        data = request.json
+        # StuCourseID=data.get('StuCourseID')
+        StudentID = data.get('StudentID')
+        CourseID = data.get('CourseID')  # List of selected course IDs
+        
+        if not StudentID or not CourseID:
+            return jsonify({"message": "Student ID and Course IDs are required!"}), 400
+
+        registered_courses = []
+
+        try:
+            for CourseID in CourseID:
+                # Check if the student is already registered for the course
+                cursor.execute(
+                    "SELECT * FROM StudentCourse WHERE StudentID = ? AND CourseID = ?",
+                    (StudentID, CourseID)
+                )
+                if cursor.fetchone():
+                    continue  # Skip if already registered
+                
+                # Register the student for the course
+                cursor.execute(
+                    "INSERT INTO StudentCourse (StudentID, CourseID) VALUES ( ?,?)",
+                    (StudentID, CourseID)
+                )
+                registered_courses.append(CourseID)
+
+            conn.commit()
+            return jsonify({
+                "message": "Student registered for courses successfully!",
+                "registered_courses": registered_courses
+            }), 201
+        except Exception as e:
+            conn.rollback()
+            return jsonify({"message": f"Error registering courses: {str(e)}"}), 500
+        finally:
+            conn.close() 
+
+
+# # View student-course registrations
+@app.route('/api/Student/viewCourses', methods=['GET'])
+def view_student_courses():
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    # Query to get student information and their registered courses
+    cursor.execute("""
+        SELECT 
+            Student.StudentID, 
+            Student.StudentName AS StudentName,
+            Course.CourseID, 
+            Course.CourseName AS CourseName,
+            Course.CreditHrTh, 
+            Course.CreditHrLab,
+            Program.ProgName,
+            Semester.SemesterName
+        FROM 
+            Student
+        INNER JOIN 
+            StudentCourse ON Student.StudentID = StudentCourse.StudentID
+        INNER JOIN 
+            Course ON StudentCourse.CourseID = Course.CourseID
+        INNER JOIN
+            Program ON Course.ProgID = Program.ProgID
+        INNER JOIN
+            Semester ON Course.SemID = Semester.SemesterID
+        
+        ORDER BY Student.StudentID
+    """)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    # Group courses by student ID
+    student_courses = {}
+    for row in rows:
+        StudentID = row[0]
+        StudentName = row[1]
+        course_details = {
+            "CourseID": row[2],
+            "CourseName": row[3],
+            "CreditHrTh": row[4],
+            "CreditHrLab": row[5]
+        }
+        ProgName = row[6]
+        SemesterName = row[7]
+        if StudentID not in student_courses:
+            student_courses[StudentID] = {
+                "StudentName": StudentName,
+                "Courses": [],
+                "Program": ProgName,
+                "Semester": SemesterName
+            }
+        student_courses[StudentID]["Courses"].append(course_details)
+    
+    # Convert to a list for JSON response
+    result = [
+        {
+            "StudentID": StudentID,
+            "StudentName": student_info["StudentName"],
+            "Courses": student_info["Courses"],
+            "Program": student_info["Program"],
+            "Semester": student_info["Semester"]
+        }
+        for StudentID, student_info in student_courses.items()
+    ]
+    
+    return jsonify(result)            
 
 #     # Endpoint to register courses for a student
 # @app.route('/api/Student/RegisterCourses', methods=['POST'])
