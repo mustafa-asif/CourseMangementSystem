@@ -1,0 +1,55 @@
+@app.route('/api/view_student_courses', methods=['GET'])
+def view_student_courses():
+    # Get the StudentID from the query parameters
+    student_id = request.args.get('StudentID', type=int)
+    
+    if not student_id:
+        return jsonify({"error": "StudentID is required"}), 400
+    
+    conn = get_connection()
+    cursor = conn.cursor()
+    
+    # Query to get courses for a specific student
+    query = """
+        SELECT 
+            Course.CourseID, 
+            Course.Name AS CourseName,
+            Course.CreditHoursTheory, 
+            Course.CreditHoursLab
+        FROM 
+            Student
+        INNER JOIN 
+            StudentCourse ON Student.StudentID = StudentCourse.StudentID
+        INNER JOIN 
+            Course ON StudentCourse.CourseID = Course.CourseID
+        WHERE 
+            Student.StudentID = %s
+        ORDER BY 
+            Course.CourseID
+    """
+    
+    cursor.execute(query, (student_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    
+    # If no data found for the given student
+    if not rows:
+        return jsonify({"error": f"No courses found for StudentID {student_id}"}), 404
+
+    # Prepare response
+    courses = [
+        {
+            "CourseID": row[0],
+            "CourseName": row[1],
+            "CreditHoursTheory": row[2],
+            "CreditHoursLab": row[3]
+        }
+        for row in rows
+    ]
+    
+    result = {
+        "StudentID": student_id,
+        "Courses": courses
+    }
+    
+    return jsonify(result)
