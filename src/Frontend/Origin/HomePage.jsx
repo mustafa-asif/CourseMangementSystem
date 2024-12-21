@@ -15,6 +15,10 @@ const HomePage = () => {
     const handleStudentPortal =()=>{
       navigate('/Student/StudentPortal')
     }
+    // route to Teacher portal
+    const handleTeacherPortal =()=>{
+      navigate('/Teacher/ViewCourses')
+    }
 
   return (
     <div>
@@ -24,6 +28,9 @@ const HomePage = () => {
       </div>
       <div>
         <button onClick={handleStudentPortal}>Student Portal</button>
+      </div>
+      <div>
+        <button onClick={handleTeacherPortal}>Teacher Portal</button>
       </div>
       
     </div>

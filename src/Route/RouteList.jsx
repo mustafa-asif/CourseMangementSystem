@@ -10,6 +10,7 @@ import Teachers from '../Frontend/Teachers';
 import RegisterCourse from '../Frontend/StudentPortal/RegisterCourse';
 import ViewCourses from '../Frontend/StudentPortal/ViewCourses';
 import HomePage from '../Frontend/Origin/HomePage';
+import TeacherView from '../Frontend/TeacherPanel/TeacherView';
 
     const RouteList =[
         {
@@ -44,6 +45,10 @@ import HomePage from '../Frontend/Origin/HomePage';
         {
             path: '/Student/ViewCourses',
             element: <ViewCourses />
+        },
+        {
+            path: '/Teacher/ViewCourses',
+            element: <TeacherView />
         }
       
        

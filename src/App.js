@@ -1,6 +1,7 @@
 
 import './App.css';
 import AppRouter from './Route/AppRouter.jsx';
+import TeacherView from './Frontend/TeacherPanel/TeacherView.jsx';
 
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
       <div>
         <AppRouter />
       </div>
+
+  
 
     </div>
   );
