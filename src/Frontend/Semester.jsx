@@ -13,7 +13,7 @@ const Semester = () => {
   const navigate=useNavigate();
 
   const handleAddCourse = () => {
-    navigate('/');
+    navigate('/Admin/Courses');
   }  
 
     // Fetch Semester from backend

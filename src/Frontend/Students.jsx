@@ -23,7 +23,7 @@ const Students = () => {
 
     // Routing
     const addCourseHandler = () => {
-        navigate("/");
+        navigate("/Admin/Courses");
     };
 
     // Show Common Courses

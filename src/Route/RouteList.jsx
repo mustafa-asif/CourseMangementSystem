@@ -22,7 +22,7 @@ import HomePage from '../Frontend/Origin/HomePage';
         },
       
         {
-            path :'/Admin/Semester',
+            path :"/Admin/Semester",
             element:<Semester />
         },
         {

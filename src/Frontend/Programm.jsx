@@ -13,7 +13,7 @@ const Programm = () => {
   const navigate=useNavigate();
 
   const handleAddCourse = () => {
-    navigate('/');
+    navigate('/Admin/Courses');
   }
 
   // fetch programm from backend

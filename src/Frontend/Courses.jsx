@@ -76,21 +76,21 @@ const Courses = () => {
 
     // route to add programm
     const addProgHandler=()=>{
-        navigate('./Admin/Program')
+        navigate('/Admin/Program')
     }
 
     // route to add Student
     const addStudentHandler=()=>{
-        navigate('./Admin/Student')
+        navigate('/Admin/Student')
     }
 
     // route to add Semester
     const addSemHandler=()=>{
-        navigate('./Admin/Semester')
+        navigate('/Admin/Semester')
     }
     // route to add Teacher
     const addTeacherHandler=()=>{
-        navigate('./Admin/Teacher')
+        navigate('/Admin/Teacher')
     }
 
     // Route to Home Page

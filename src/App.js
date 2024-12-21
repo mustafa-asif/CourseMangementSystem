@@ -1,6 +1,5 @@
 
 import './App.css';
-import { useState } from 'react';
 import AppRouter from './Route/AppRouter.jsx';
 
 
@@ -9,7 +8,7 @@ function App() {
     <div >
 
       <div>
-        <AppRouter />;
+        <AppRouter />
       </div>
 
     </div>
