@@ -40,7 +40,7 @@ const Courses = () => {
     // Add a course
     const addCourse = async () => {
         try {
-            await axios.post("http://localhost:5500/api/Admin/Course", { CourseID,CourseName,CreditHrTh,CreditHrLab,ProgID,SemID },
+            await axios.post("http://localhost:5500/api/Admin/Course", { CourseID,CourseName,CreditHrTh,CreditHrLab,ProgID,SemID,TeacherID },
                 {
                     headers: {
                         'Content-Type': 'application/json'  // Set the header for JSON content
