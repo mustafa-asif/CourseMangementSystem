@@ -4,14 +4,22 @@
   "private": true,
   "proxy": "http://127.0.0.1:5500",
   "dependencies": {
+    "@mantine/code-highlight": "^7.15.1",
+    "@mantine/core": "^7.15.1",
+    "@mantine/dates": "^7.15.1",
+    "@mantine/form": "^7.15.1",
+    "@mantine/hooks": "^7.15.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.2",
     "react-scripts": "5.0.1",
+    "semantic-ui-css": "^2.5.0",
+    "semantic-ui-react": "^2.1.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -37,5 +45,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1"
   }
 }
