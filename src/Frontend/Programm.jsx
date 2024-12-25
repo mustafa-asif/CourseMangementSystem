@@ -1,133 +1,150 @@
-import React,{useState,useEffect} from 'react';
+
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, Table, Header, Container, Segment, Message } from 'semantic-ui-react';
 
 const Programm = () => {
-  const [Program,setProgram]=useState([]);
-  const [ProgID,setProgID]=useState("")
-  const [ProgName,setProgName]=useState("")
-  const [loading, setLoading] = useState(true)
+  const [Program, setProgram] = useState([]);
+  const [ProgID, setProgID] = useState("");
+  const [ProgName, setProgName] = useState("");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // route to add courses
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
+  // Route to add courses
   const handleAddCourse = () => {
     navigate('/Admin/Courses');
-  }
+  };
 
-  // fetch programm from backend
-
-  const fetchProgramm = async ()=>{
+  // Fetch programs from backend
+  const fetchProgramm = async () => {
     try {
-        const response = await axios.get("http://localhost:5500/api/Admin/Program");
-        // console.log(response);
-        setProgram(response.data);
-        setLoading(false)
-        // console.log(setSemester(response.data));
+      const response = await axios.get("http://localhost:5500/api/Admin/Program");
+      setProgram(response.data);
+      setLoading(false);
     } catch (error) {
-        console.error("Error fetching programm:", error);
-        setError("Error fetching Programm".error);
-        setLoading(false)
+      console.error("Error fetching programm:", error);
+      setError("Error fetching Programm");
+      setLoading(false);
     }
   };
 
-  // adding programm
+  // Add program
   const addProgram = async () => {
     try {
-        const recive=await axios.post("http://localhost:5500/api/Admin/Program", 
-            { ProgID, ProgName },  // Send the data as JSON
-            {
-                headers: {
-                    'Content-Type': 'application/json'  // Set the header for JSON content
-                }
-            }
-        );
-        console.log(recive);
-        fetchProgramm(); // Refresh Semester list
-        setProgID();
-        setProgName("");  // Clear the form fields after adding
+      await axios.post(
+        "http://localhost:5500/api/Admin/Program",
+        { ProgID, ProgName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      fetchProgramm();
+      setProgID("");
+      setProgName("");
     } catch (error) {
-        console.error("Error adding programm:", error);
+      console.error("Error adding programm:", error);
     }
-};
+  };
 
-// delete programm
-const deleteProgramm = async (CourseID) => {
-  try {
-      await axios.delete(`http://localhost:5500/api/Admin/Program/${CourseID}`);
-      fetchProgramm(); // Refresh user list
-  } catch (error) {
+  // Delete program
+  const deleteProgramm = async (ProgID) => {
+    try {
+      await axios.delete(`http://localhost:5500/api/Admin/Program/${ProgID}`);
+      fetchProgramm();
+    } catch (error) {
       console.error("Error deleting programm:", error);
-  }
-};
+    }
+  };
 
-      useEffect(()=>{
-        fetchProgramm();
-      },[]);
+  useEffect(() => {
+    fetchProgramm();
+  }, []);
 
   return (
-    <div>
-            <h1>Programm Management</h1>
-            {loading && <p>Loading courses...</p>}
+    <Container style={{ marginTop: '3rem' }}>
+      <Header as="h1" textAlign="center" style={{ marginBottom: '2rem' }}>
+        Program Management
+      </Header>
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    addProgram();
-                     // setLoading(false)
-                }}
-                >
-                <input
-                    type="number"
-                    placeholder="programm ID"
-                    value={ProgID}
-                    onChange={(e) => setProgID(e.target.value)}
-                    min={1}
-                    required
-                    />
-                <input
-                    type="text"
-                    placeholder="programm Name"
-                    value={ProgName}
-                    onChange={(e) => setProgName(e.target.value)}
-                    required
-                    />
-              
-                <button type="submit">Add Programm</button>
-            </form>
-                    {!loading && !error && (
+      {loading && <Message info>Loading programs...</Message>}
+      {error && <Message error>{error}</Message>}
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pogramm ID</th>
-                        <th>Programm Name</th>
-                      
-                    </tr>
-                </thead>
-                <tbody>
-                    {Program.map((Program) => (
-                        <tr key={Program.ProgID}>
-                            <td>{Program.ProgID}</td>
-                            <td>{Program.ProgName}</td>
-                           
-                            <td>
-                                <button onClick={()=>{
-                                    deleteProgramm(Program.ProgID);
-                                }}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            )}
-            <div>
-              <button onClick={handleAddCourse}>Add courses</button>
-            </div>
-        </div>
+      <Segment>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            addProgram();
+          }}
+        >
+          <Form.Group widths="equal">
+            <Form.Field>
+              <label>Program ID</label>
+              <Input
+                type="number"
+                placeholder="Program ID"
+                value={ProgID}
+                onChange={(e) => setProgID(e.target.value)}
+                required
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>Program Name</label>
+              <Input
+                type="text"
+                placeholder="Program Name"
+                value={ProgName}
+                onChange={(e) => setProgName(e.target.value)}
+                required
+              />
+            </Form.Field>
+          </Form.Group>
+          <Button type="submit" primary>Add Program</Button>
+        </Form>
+      </Segment>
+
+      {!loading && !error && (
+        <Segment>
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Program ID</Table.HeaderCell>
+                <Table.HeaderCell>Program Name</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {Program.map((prog) => (
+                <Table.Row key={prog.ProgID}>
+                  <Table.Cell>{prog.ProgID}</Table.Cell>
+                  <Table.Cell>{prog.ProgName}</Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      color="red"
+                      onClick={() => deleteProgramm(prog.ProgID)}
+                    >
+                      Delete
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </Segment>
+      )}
+
+      <Segment textAlign="center">
+        <Button color="teal" onClick={handleAddCourse}>
+          Add Courses
+        </Button>
+      </Segment>
+    </Container>
   );
-}
+};
 
 export default Programm;
+

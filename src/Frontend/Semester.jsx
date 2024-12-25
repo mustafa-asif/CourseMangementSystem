@@ -1,135 +1,148 @@
-
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, Table, Header, Container, Segment, Message } from 'semantic-ui-react';
 
 const Semester = () => {
-    const [Semester, setSemester] = useState([]);
-    const [SemesterID, setID] = useState("");
-    const [SemesterName, setName] = useState("");
-    const [loading, setLoading] = useState(true)
+  const [Semester, setSemester] = useState([]);
+  const [SemesterID, setID] = useState("");
+  const [SemesterName, setName] = useState("");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   const handleAddCourse = () => {
     navigate('/Admin/Courses');
-  }  
+  };
 
-    // Fetch Semester from backend
-    const fetchSemester = async () => {
-        try {
-            const response = await axios.get("http://localhost:5500/api/Admin/Semesters");
-            // console.log(response);
-            setSemester(response.data);
-            setLoading(false)
-            // console.log(setSemester(response.data));
-        } catch (error) {
-            console.error("Error fetching Semester:", error);
-            setError("Error fetching Semester".error);
-            setLoading(false)
+  // Fetch semesters from backend
+  const fetchSemester = async () => {
+    try {
+      const response = await axios.get("http://localhost:5500/api/Admin/Semesters");
+      setSemester(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching Semester:", error);
+      setError("Error fetching Semester");
+      setLoading(false);
+    }
+  };
+
+  // Add a semester
+  const addSemester = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5500/api/Admin/Semesters",
+        { SemesterID, SemesterName },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-    };
+      );
+      fetchSemester();
+      setID("");
+      setName("");
+    } catch (error) {
+      console.error("Error adding Semester:", error);
+    }
+  };
 
-    // Add a semester
-    const addSemester = async () => {
-        try {
-            const recive=await axios.post("http://localhost:5500/api/Admin/Semesters", 
-                { SemesterID, SemesterName },  // Send the data as JSON
-                {
-                    headers: {
-                        'Content-Type': 'application/json'  // Set the header for JSON content
-                    }
-                }
-            );
-            console.log(recive);
-            fetchSemester(); // Refresh Semester list
-            setID();
-            setName("");  // Clear the form fields after adding
-        } catch (error) {
-            console.error("Error adding Semester:", error);
-        }
-    };
-    
+  // Delete a semester
+  const deleteSemester = async (SemesterID) => {
+    try {
+      await axios.delete(`http://localhost:5500/api/Admin/Semesters/${SemesterID}`);
+      fetchSemester();
+    } catch (error) {
+      console.error("Error deleting Semester:", error);
+    }
+  };
 
-    // Delete a Course
-    const deleteSemester = async (CourseID) => {
-        try {
-            await axios.delete(`http://localhost:5500/api/Admin/Semesters/${CourseID}`);
-            fetchSemester(); // Refresh user list
-        } catch (error) {
-            console.error("Error deleting user:", error);
-        }
-    };
+  useEffect(() => {
+    fetchSemester();
+  }, []);
 
-    useEffect(() => {
-        fetchSemester();
-    }, []);
+  return (
+    <Container style={{ marginTop: '3rem' }}>
+      <Header as="h1" textAlign="center" style={{ marginBottom: '2rem' }}>
+        Semester Management
+      </Header>
 
-    return (
-        <div>
-            <h1>Semester Management</h1>
-            {loading && <p>Loading courses...</p>}
+      {loading && <Message info>Loading semesters...</Message>}
+      {error && <Message error>{error}</Message>}
 
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    addSemester();
-                    // setLoading(false)
-                }}
-                >
-                <input
-                    type="number"
-                    placeholder="SemesterID"
-                    value={SemesterID}
-                    onChange={(e) => setID(e.target.value)}
-                    min={1}
-                    required
-                    />
-                <input
-                    type="text"
-                    placeholder="Semester Name"
-                    value={SemesterName}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    />
-              
-                <button type="submit">Add Semester</button>
-            </form>
-                    {!loading && !error && (
+      <Segment>
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault();
+            addSemester();
+          }}
+        >
+          <Form.Group widths="equal">
+            <Form.Field>
+              <label>Semester ID</label>
+              <Input
+                type="number"
+                placeholder="Semester ID"
+                value={SemesterID}
+                onChange={(e) => setID(e.target.value)}
+                required
+              />
+            </Form.Field>
+            <Form.Field>
+              <label>Semester Name</label>
+              <Input
+                type="text"
+                placeholder="Semester Name"
+                value={SemesterName}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </Form.Field>
+          </Form.Group>
+          <Button type="submit" primary>Add Semester</Button>
+        </Form>
+      </Segment>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Semester ID</th>
-                        <th>Semester Name</th>
+      {!loading && !error && (
+        <Segment>
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Semester ID</Table.HeaderCell>
+                <Table.HeaderCell>Semester Name</Table.HeaderCell>
+                <Table.HeaderCell>Actions</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {Semester.map((sem) => (
+                <Table.Row key={sem.SemesterID}>
+                  <Table.Cell>{sem.SemesterID}</Table.Cell>
+                  <Table.Cell>{sem.SemesterName}</Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      color="red"
                       
-                    </tr>
-                </thead>
-                <tbody>
-                    {Semester.map((Semester) => (
-                        <tr key={Semester.SemesterID}>
-                            <td>{Semester.SemesterID}</td>
-                            <td>{Semester.SemesterName}</td>
-                           
-                            <td>
-                                <button onClick={()=>{
-                                    deleteSemester(Semester.SemesterID);
-                                }}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            )}
+                      onClick={() => deleteSemester(sem.SemesterID)}
+                    >
+                      Delete
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </Segment>
+      )}
 
-            <div>
-                <button onClick={handleAddCourse}>Add courses</button>
-            </div>
-        </div>
-    );
+      <Segment textAlign="center">
+        <Button color="teal" onClick={handleAddCourse}>
+          Add Courses
+        </Button>
+      </Segment>
+    </Container>
+  );
 };
 
 export default Semester;
-

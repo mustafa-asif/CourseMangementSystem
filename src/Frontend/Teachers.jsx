@@ -3,6 +3,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SemesterCourses from "./SemesterCourses";
+import { 
+    Button, 
+    Form, 
+    Input,
+     Table,
+      Header,
+      Container, 
+      Segment } from 'semantic-ui-react';
 
 const Teachers = () => {
     const [Teacher, setTeacher] = useState([]);
@@ -113,125 +121,163 @@ const Teachers = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Teacher Management</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="number"
-                    placeholder="TeacherID"
-                    value={TeacherID}
-                    onChange={(e) => setTeacherID(e.target.value)}
-                    min={1}
-                    required
-                    disabled={isEditing} // Disable ID when editing
-                />
-                <input
-                    type="text"
-                    placeholder="Teacher Name"
-                    value={TeacherName}
-                    onChange={(e) => setTeacherName(e.target.value)}
-                    required
-                />
-                <input
-                    type="date"
-                    placeholder="Date of Joining"
-                    value={DOJ}
-                    onChange={(e) => setDOJ(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Status"
-                    value={Status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Salary"
-                    value={Salary}
-                    onChange={(e) => setSalary(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Profession"
-                    value={Job}
-                    onChange={(e) => setJob(e.target.value)}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Course ID"
-                    value={CourseID}
-                    onChange={(e) => setCourseID(e.target.value)}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Program ID"
-                    value={ProgID}
-                    onChange={(e) => setProgID(e.target.value)}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Semester ID"
-                    value={SemID}
-                    onChange={(e) => setSemID(e.target.value)}
-                    required
-                />
-                <button type="submit">{isEditing ? "Update Teacher" : "Add Teacher"}</button>
-                {isEditing && <button onClick={resetForm}>Cancel</button>}
-            </form>
+        <Container style={{ marginTop: '3rem', backgroundColor: '#f7f8fa', padding: '2rem', borderRadius: '8px' }}>
+                   <Header as="h1" textAlign="center">Teacher Management</Header>
+            <Segment>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group widths="equal">
+                <Form.Field
+                        control={Input}
+                        type="number"
+                        label="Teacher ID"
+                        placeholder="TeacherID"
+                        value={TeacherID}
+                        onChange={(e) => setTeacherID(e.target.value)}
+                        min={1}
+                        required
+                        disabled={isEditing} // Disable ID when editing
+                        />
+                <Form.Field
+                        control={Input}
+                        label="Teacher Name"
+                        type="text"
+                        placeholder="Teacher Name"
+                        value={TeacherName}
+                        onChange={(e) => setTeacherName(e.target.value)}
+                        required
+                        />
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>TeacherID</th>
-                        <th>Teacher Name</th>
-                        <th>Date of Joining</th>
-                        <th>Status</th>
-                        <th>Salary </th>
-                        <th>Job </th>
-                        <th>CourseID</th>
-                        <th>Program ID</th>
-                        <th>Semester ID</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Teacher.map((teacher) => (
-                        <tr key={teacher.TeacherID}>
-                            <td>{teacher.TeacherID}</td>
-                            <td>{teacher.TeacherName}</td>
-                            <td>{teacher.DOJ}</td>
-                            <td>{teacher.Status}</td>
-                            <td>{teacher.Salary}</td>
-                            <td>{teacher.Job}</td>
-                            <td>{teacher.CourseID}</td>
-                            <td>{teacher.ProgID}</td>
-                            <td>{teacher.SemID}</td>
-                            <td>
-                                <button onClick={() => editTeacher(teacher)}>Edit</button>
-                                <button onClick={() => deleteTeachers(teacher.TeacherID)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+                </Form.Group>
 
-            <div>
-                <button onClick={() => addCourseHandler()}>Add Course</button>
-            </div>
+                <Form.Group widths="equal">
+                    <Form.Field 
+                        control={Input}
+                        label="Date of Join"
+                        type="date"
+                        placeholder="Date of Joining"
+                        value={DOJ}
+                        onChange={(e) => setDOJ(e.target.value)}
+                        required
+                     />
 
-            <div className="App">
-                <button onClick={handleShowCommonCourses}>
-                    {showCourses ? "Hide Courses" : "Show  Courses"}
-                </button>
-                {showCourses && <SemesterCourses />}
-            </div>
-        </div>
+                    <Form.Field
+                        control={Input}
+                        label="Status"
+                        type="text"
+                        placeholder="Status"
+                        value={Status}
+                        onChange={(e) => setStatus(e.target.value)}
+                        required
+                     />
+                    <Form.Field
+                        control={Input}
+                        label="Salary"
+                        type="number"
+                        placeholder="Salary"
+                        value={Salary}
+                        onChange={(e) => setSalary(e.target.value)}
+                        required
+                     /> 
+                </Form.Group >
+                <Form.Group widths="equal">
+                    <Form.Field
+                        control={Input}
+                        label="Profession"
+                        type="text"
+                        placeholder="Profession"
+                        value={Job}
+                        onChange={(e) => setJob(e.target.value)}
+                        required
+                     />
+                    <Form.Field 
+                       control={Input}
+                       label="CourseID"
+                       type="number"
+                       placeholder="Course ID"
+                       value={CourseID}
+                       onChange={(e) => setCourseID(e.target.value)}
+                       required
+                     />
+                </Form.Group>
+                <Form.Group widths="equal">
+                    <Form.Field
+                        control={Input}
+                        label="Programm ID"
+                        type="number"
+                        placeholder="Program ID"
+                        value={ProgID}
+                        onChange={(e) => setProgID(e.target.value)}
+                        required
+                     />
+
+                    <Form.Field
+                     
+                        control={Input}
+                        label="Semester ID"
+                        type="number"
+                        placeholder="Semester ID"
+                        value={SemID}
+                        onChange={(e) => setSemID(e.target.value)}
+                        required
+                     />
+                </Form.Group>
+
+                <Button primary type="submit">{isEditing ? "Update Teacher" : "Add Teacher"}</Button>
+                {isEditing && <Button secondary onClick={resetForm}>Cancel</Button>}
+        </Form>
+        </Segment>
+
+        <Segment>
+            <Header as="h2" textAlign="center">Teacher List</Header>
+            <Table celled>
+                <Table.Header>
+                         <Table.Row>
+                                <Table.HeaderCell>Teacher ID</Table.HeaderCell>
+                                <Table.HeaderCell>Teacher Name</Table.HeaderCell>
+                                <Table.HeaderCell>Date of Joining</Table.HeaderCell>
+                                <Table.HeaderCell>Status</Table.HeaderCell>
+                                <Table.HeaderCell>Salary </Table.HeaderCell>
+                                <Table.HeaderCell>Profession </Table.HeaderCell>
+                                <Table.HeaderCell>Course ID </Table.HeaderCell>
+                                <Table.HeaderCell>Program ID</Table.HeaderCell>
+                                <Table.HeaderCell>Semester ID</Table.HeaderCell>
+                                <Table.HeaderCell>Actions</Table.HeaderCell>
+                            </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                {Teacher.map((teacher) => (
+                        <Table.Row key={teacher.TeacherID}>
+                            <Table.Cell>{teacher.TeacherID}</Table.Cell>
+                            <Table.Cell>{teacher.TeacherName}</Table.Cell>
+                            <Table.Cell>{teacher.DOJ}</Table.Cell>
+                            <Table.Cell>{teacher.Status}</Table.Cell>
+                            <Table.Cell>{teacher.Salary}</Table.Cell>
+                            <Table.Cell>{teacher.Job}</Table.Cell>
+                            <Table.Cell>{teacher.CourseID}</Table.Cell>
+                            <Table.Cell>{teacher.ProgID}</Table.Cell>
+                            <Table.Cell>{teacher.SemID}</Table.Cell>
+                            <Table.Cell>
+                                <Button color="blue" onClick={() => editTeacher(teacher)}>Edit</Button>
+                                <Button color="red" onClick={() => deleteTeachers(teacher.TeacherID)}>Delete</Button>
+                            </Table.Cell>
+                        </Table.Row>
+                         ))}
+
+                </Table.Body>
+
+
+            </Table>
+
+
+        </Segment>
+
+        <Segment>
+        
+            <Button  color="teal" onClick={() => addCourseHandler()}>Add Course</Button>
+            
+        </Segment>
+            
+        </Container>
     );
 };
 
