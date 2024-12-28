@@ -3,7 +3,7 @@ import axios from "axios";
 import "./teacherView.css";
 
 import { useNavigate } from "react-router-dom";
-import { Button, Container,Header,Form ,Segment, Message, Table} from "semantic-ui-react";
+import { Button,Menu, Container,Header,Form ,Segment, Message, Table} from "semantic-ui-react";
 
 const TeacherView = () => {
   const [teacherID, setTeacherID] = useState("");
@@ -49,6 +49,11 @@ const TeacherView = () => {
 
   return (
     <div >
+        <Menu inverted>
+        <Menu.Item header>Course Management System</Menu.Item>
+        <Menu.Item name="Logout" position="right" onClick={() => handleLogin()} />
+      </Menu>
+      
 
     <Container style={{ marginTop: "2rem" }}>
       <Header style={{
@@ -93,7 +98,7 @@ const TeacherView = () => {
       {courseData.length > 0 && (
         <Segment style={{ marginTop: "20px" }}>
           <Header as="h3">Registered Courses and Students</Header>
-          <Table celled>
+          <Table celled  striped responsive>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Student ID</Table.HeaderCell>

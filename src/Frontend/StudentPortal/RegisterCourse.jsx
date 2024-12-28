@@ -10,6 +10,7 @@ import {
   Message,
   Segment,
   Table,
+  Menu
 } from "semantic-ui-react";
 
 const RegisterCourse = () => {
@@ -90,8 +91,22 @@ const RegisterCourse = () => {
   };
 
   return (
+    <div>
+          <Menu inverted>
+        <Menu.Item header>Course Management System</Menu.Item>
+        <Menu.Item name="View Registered Courses" onClick={() => handleViewCourses()} />
+
+        <Menu.Item name="Logout" position="right" onClick={() => handleBackHome()} />
+      </Menu>
+
     <Container style={{ marginTop: "2rem" }}>
-      <Header  as="h1" textAlign="center">
+      <Header style={{
+        backgroundColor: '#001F3F',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        marginBottom: '20px'
+      }}  as="h1" textAlign="center">
         Course Registration
       </Header>
 
@@ -100,10 +115,11 @@ const RegisterCourse = () => {
           <Form.Field>
             <label>Student ID</label>
             <input
-              type="text"
+              type="number"
               placeholder="Enter Student ID"
               value={StudentID}
               onChange={(e) => setStudentID(e.target.value)}
+            
             />
           </Form.Field>
           <Button
@@ -130,7 +146,7 @@ const RegisterCourse = () => {
       <Segment>
         <Header as="h3">Available Courses</Header>
         {courses.length > 0 ? (
-          <Table celled>
+          <Table celled  striped responsive>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Course ID</Table.HeaderCell>
@@ -166,15 +182,9 @@ const RegisterCourse = () => {
         </Button>
       </Segment>
 
-      <Segment>
-        <Button color="teal" onClick={handleViewCourses}>
-          View Registered Courses
-        </Button>
-        <Button secondary onClick={handleBackHome} style={{ marginLeft: "10px" }}>
-          Back to Login
-        </Button>
-      </Segment>
+  
     </Container>
+          </div>
   );
 };
 

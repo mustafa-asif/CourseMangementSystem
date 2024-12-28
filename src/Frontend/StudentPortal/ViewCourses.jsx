@@ -51,7 +51,13 @@ const ViewCourses = () => {
 
   return (
     <Container style={{ marginTop: "2rem" }}>
-      <Header as="h1" textAlign="center">
+      <Header style={{
+        backgroundColor: '#001F3F',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        marginBottom: '20px'
+      }} as="h1" textAlign="center">
         View Student Courses
       </Header>
 
@@ -101,7 +107,7 @@ const ViewCourses = () => {
           </p>
 
           <Header as="h4">Registered Courses</Header>
-          <Table celled>
+          <Table celled  striped responsive>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Course ID</Table.HeaderCell>
