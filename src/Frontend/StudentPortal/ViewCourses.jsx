@@ -50,10 +50,10 @@ const ViewCourses = () => {
   };
 
   return (
-    <Container style={{ marginTop: "2rem" }}>
+   <Container style={{ marginTop: '3rem', backgroundColor: '#f7f8fa', padding: '2rem', borderRadius: '8px' }}>
       <Header style={{
-        backgroundColor: '#001F3F',
-        color: 'white',
+        
+        color: 'black',
         padding: '10px',
         borderRadius: '5px',
         marginBottom: '20px'
