@@ -176,7 +176,7 @@ const Students = () => {
 
             <Segment>
                 <Header as="h3">Student List</Header>
-                <Table celled>
+                <Table celled striped responsive>
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>Student ID</Table.HeaderCell>

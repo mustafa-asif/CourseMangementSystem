@@ -88,7 +88,7 @@ const Courses = () => {
         <Menu.Item name="Logout" position="right" onClick={() => navigate("/")} />
       </Menu>
 
-      <Container>
+      <Container style={{ marginTop: '3rem', backgroundColor: '#f7f8fa', padding: '2rem', borderRadius: '8px' }}>
         <Header as="h1" textAlign="center" style={{ marginTop: "1rem" }}>
           Course Management
         </Header>

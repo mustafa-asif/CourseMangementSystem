@@ -64,7 +64,7 @@ const Semester = () => {
   }, []);
 
   return (
-    <Container style={{ marginTop: '3rem' }}>
+      <Container style={{ marginTop: '3rem', backgroundColor: '#f7f8fa', padding: '2rem', borderRadius: '8px' }}>
       <Header as="h1" textAlign="center" style={{ marginBottom: '2rem' }}>
         Semester Management
       </Header>

@@ -229,7 +229,7 @@ const Teachers = () => {
 
         <Segment>
             <Header as="h2" textAlign="center">Teacher List</Header>
-            <Table celled>
+            <Table celled striped responsive>
                 <Table.Header>
                          <Table.Row>
                                 <Table.HeaderCell>Teacher ID</Table.HeaderCell>

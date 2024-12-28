@@ -74,7 +74,7 @@ const Programm = () => {
       </Menu>
       <Divider />
 
-    <Container style={{ marginTop: '3rem' }}>
+      <Container style={{ marginTop: '3rem', backgroundColor: '#f7f8fa', padding: '2rem', borderRadius: '8px' }}>
       <Header as="h1" textAlign="center" style={{ marginBottom: '2rem'}}>
         Program Management
       </Header>
