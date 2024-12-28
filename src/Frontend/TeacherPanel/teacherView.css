@@ -1,0 +1,5 @@
+.teacher-view{
+  display: flex;
+  flex-direction: column;
+  background: #000;
+}

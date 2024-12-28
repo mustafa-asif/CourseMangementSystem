@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Input, Table, Header, Container, Segment, Message } from 'semantic-ui-react';
+import { Button,Menu, Divider,Form, Input, Table, Header, Container, Segment, Message } from 'semantic-ui-react';
 
 const Programm = () => {
   const [Program, setProgram] = useState([]);
@@ -66,8 +66,16 @@ const Programm = () => {
   }, []);
 
   return (
+    <div>
+       <Menu inverted  >
+        <Menu.Item header>Course Management System</Menu.Item>
+
+        <Menu.Item name="Courses" position="right" onClick={() => handleAddCourse()} />
+      </Menu>
+      <Divider />
+
     <Container style={{ marginTop: '3rem' }}>
-      <Header as="h1" textAlign="center" style={{ marginBottom: '2rem' }}>
+      <Header as="h1" textAlign="center" style={{ marginBottom: '2rem'}}>
         Program Management
       </Header>
 
@@ -103,7 +111,7 @@ const Programm = () => {
               />
             </Form.Field>
           </Form.Group>
-          <Button type="submit" primary>Add Program</Button>
+          <Button type="submit" color='teal'>Add Program</Button>
         </Form>
       </Segment>
 
@@ -143,6 +151,7 @@ const Programm = () => {
         </Button>
       </Segment>
     </Container>
+              </div>
   );
 };
 

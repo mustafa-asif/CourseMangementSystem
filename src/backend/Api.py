@@ -409,10 +409,18 @@ def delete_teacher(TeacherID):
 def RegisterCourses():
     conn = get_connection()
     cursor = conn.cursor()
+    student_id = request.args.get('StudentID')
     
     if request.method == 'GET':
         # Fetch all courses from the Course table
-        cursor.execute("SELECT CourseID, CourseName FROM Course")
+        cursor.execute("""SELECT CourseID, CourseName
+         FROM 
+         Course
+         INNER JOIN 
+         Student ON Student.ProgID = Course.ProgID 
+         WHERE
+            Student.StudentID = ?
+        """,(student_id))
         rows = cursor.fetchall()
         conn.close()
         

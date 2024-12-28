@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./teacherView.css";
+
 import { useNavigate } from "react-router-dom";
+import { Button, Container,Header,Form ,Segment, Message, Table} from "semantic-ui-react";
 
 const TeacherView = () => {
   const [teacherID, setTeacherID] = useState("");
@@ -45,74 +48,85 @@ const TeacherView = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Teacher - View Registered Courses</h1>
+    <div >
+
+    <Container style={{ marginTop: "2rem" }}>
+      <Header style={{
+        backgroundColor: '#001F3F',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '5px',
+        marginBottom: '20px'
+      }} as='h1' textAlign="center"  >Teacher - View Registered Courses</Header>
 
       {/* Teacher ID Input */}
-      <div>
-        <label>Teacher ID:</label>
-        <input
+      <Segment>
+        <Form>
+          <Form.Field>
+            <label>Teacher ID:</label>
+           <input
           type="Number"
           value={teacherID}
           onChange={(e) => setTeacherID(e.target.value)}
           style={{ marginLeft: "10px", padding: "5px" }}
         />
-        <button
+          </Form.Field>
+        
+       
+        <Button
+          color="teal"
           onClick={fetchCourses}
-          style={{
-            marginLeft: "10px",
-            padding: "5px 10px",
-            backgroundColor: "#4CAF50",
-            color: "white",
-          }}
-        >
+          style={{ marginTop: "10px" }}
+          >
           Search
-        </button>
-      </div>
+         </Button>
+        </Form>
+      </Segment>
 
       {/* Loading State */}
-      {loading && <p>Loading...</p>}
+      {loading && <Message info>Loading...</Message>}
 
       {/* Message */}
-      {message && <p style={{ color: "red", marginTop: "20px" }}>{message}</p>}
+      {message && (<Message negative style={{ marginTop:'20px' }}>{message}</Message>)}
 
       {/* Course Data */}
       {courseData.length > 0 && (
-        <div style={{ marginTop: "20px" }}>
-          <h2>Registered Courses and Students</h2>
-          <table border="1" style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th>Student ID</th>
-                <th>Student Name</th>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Semester</th>
-                <th>Program</th>
-                <th>TeacherName</th>
-              </tr>
-            </thead>
-            <tbody>
+        <Segment style={{ marginTop: "20px" }}>
+          <Header as="h3">Registered Courses and Students</Header>
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Student ID</Table.HeaderCell>
+                <Table.HeaderCell>Student Name</Table.HeaderCell>
+                <Table.HeaderCell>Course ID</Table.HeaderCell>
+                <Table.HeaderCell>Course Name</Table.HeaderCell>
+                <Table.HeaderCell>Semester</Table.HeaderCell>
+                <Table.HeaderCell>Program</Table.HeaderCell>
+                <Table.HeaderCell>TeacherName</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {courseData.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.StudentID}</td>
-                  <td>{item.StudentName}</td>
-                  <td>{item.CourseID}</td>
-                  <td>{item.CourseName}</td>
-                  <td>{item.SemesterName}</td>
-                  <td>{item.ProgramName}</td>
-                  <td>{item.TeacherName}</td>
-                </tr>
+                <Table.Row key={index}>
+                  <Table.Cell>{item.StudentID}</Table.Cell>
+                  <Table.Cell>{item.StudentName}</Table.Cell>
+                  <Table.Cell>{item.CourseID}</Table.Cell>
+                  <Table.Cell>{item.CourseName}</Table.Cell>
+                  <Table.Cell>{item.SemesterName}</Table.Cell>
+                  <Table.Cell>{item.ProgramName}</Table.Cell>
+                  <Table.Cell>{item.TeacherName}</Table.Cell>
+                </Table.Row>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </Table.Body>
+          </Table>
+        </Segment>
       )}
 
-      <div>
-        <button onClick={handleLogin}>Back to login</button>
-      </div>
-    </div>
+      <Segment textAlign="center" >
+        <Button color="teal" onClick={handleLogin}>Back to login</Button>
+      </Segment>
+    </Container>
+          </div>
   );
 };
 

@@ -1,128 +1,180 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Checkbox,
+  Container,
+  Form,
+  Header,
+  Message,
+  Segment,
+  Table,
+} from "semantic-ui-react";
 
 const RegisterCourse = () => {
   const [courses, setCourses] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [StudentID, setStudentID] = useState("");
-  // const [StuCourseID, setStuCourseID]= useState("");
   const [message, setMessage] = useState("");
+  const [error, setError] = useState(false);
 
-  // navigate too View Courses
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
-  const handleViewCourses=()=>{
+  const handleViewCourses = () => {
     navigate("/Student/viewCourses");
-  }
+  };
 
-  // naviagate to home page
-  const handlerBackHome=()=>{
-    navigate('/');
-  }
+  const handleBackHome = () => {
+    navigate("/");
+  };
 
-  // Fetch available courses
   const fetchAvailableCourses = async () => {
     try {
-      const response = await axios.get("http://localhost:5500/api/Student/RegisterCourses");
+      const response = await axios.get("http://localhost:5500/api/Student/RegisterCourses", {
+        params: { StudentID: StudentID },
+      });
       setCourses(response.data);
+      setMessage("");
+      setError(false);
     } catch (error) {
       console.error("Error fetching courses:", error);
       setMessage("Error fetching courses. Please try again later.");
+      setError(true);
     }
   };
 
-  // Fetch courses on component mount
   useEffect(() => {
-    fetchAvailableCourses();
+    if (StudentID) fetchAvailableCourses();
   }, []);
 
-  // Handle course selection
   const handleCourseSelection = (courseID) => {
     setSelectedCourses((prevSelected) =>
       prevSelected.includes(courseID)
-        ? prevSelected.filter((id) => id !== courseID) // Deselect if already selected
-        : [...prevSelected, courseID] // Add to selected
+        ? prevSelected.filter((id) => id !== courseID)
+        : [...prevSelected, courseID]
     );
   };
 
-  // Handle course registration
   const handleRegistration = async () => {
-    if (!StudentID ) {
-      setMessage("Please provide a valid Student ID ");
+    if (!StudentID) {
+      setMessage("Please provide a valid Student ID.");
+      setError(true);
       return;
     }
-    else if(selectedCourses.length === 0){
-      setMessage(" select at least one course.");
+
+    if (selectedCourses.length === 0) {
+      setMessage("Please select at least one course.");
+      setError(true);
+      return;
     }
 
     const payload = {
-       
       StudentID: StudentID,
       CourseID: selectedCourses,
     };
 
     try {
-      const response = await axios.post("http://localhost:5500/api/Student/RegisterCourses", payload);
+      const response = await axios.post(
+        "http://localhost:5500/api/Student/RegisterCourses",
+        payload
+      );
       setMessage(response.data.message || "Registered successfully!");
-      setSelectedCourses([]); // Clear selected courses after successful registration
+      setError(false);
+      setSelectedCourses([]);
     } catch (error) {
       console.error("Error registering courses:", error);
       setMessage(`Error: ${error.response?.data?.message || "An error occurred."}`);
+      setError(true);
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Course Registration</h1>
-      
-      {/* Student ID Input */}
-      <div>
-        <label>Student ID:</label>
-        <input
-          type="text"
-          value={StudentID}
-          onChange={(e) => setStudentID(e.target.value)}
-          style={{ marginLeft: "10px", padding: "5px" }}
-        />
-      </div>
-     
+    <Container style={{ marginTop: "2rem" }}>
+      <Header  as="h1" textAlign="center">
+        Course Registration
+      </Header>
 
-      {/* Courses List */}
-      <h2>Available Courses</h2>
-      {courses.length > 0 ? (
-        courses.map((course) => (
-          <div key={course.CourseID}>
+      <Segment>
+        <Form>
+          <Form.Field>
+            <label>Student ID</label>
             <input
-              type="checkbox"
-              checked={selectedCourses.includes(course.CourseID)}
-              onChange={() => handleCourseSelection(course.CourseID)}
+              type="text"
+              placeholder="Enter Student ID"
+              value={StudentID}
+              onChange={(e) => setStudentID(e.target.value)}
             />
-            <label style={{ marginLeft: "8px" }}>{course.CourseName}</label>
-          </div>
-        ))
-      ) : (
-        <p>Loading courses...</p>
+          </Form.Field>
+          <Button
+            color="teal"
+            
+            onClick={fetchAvailableCourses}
+            style={{ marginTop: "10px" }}
+          >
+            Search Available Courses
+          </Button>
+        </Form>
+      </Segment>
+
+      {message && (
+        <Message
+          positive={!error}
+          negative={error}
+          style={{ marginTop: "20px" }}
+        >
+          {message}
+        </Message>
       )}
 
-      {/* Register Button */}
-      <button
-        onClick={handleRegistration}
-        style={{ marginTop: "20px", padding: "10px", backgroundColor: "#4CAF50", color: "white" }}
-      >
-        Register
-      </button>
+      <Segment>
+        <Header as="h3">Available Courses</Header>
+        {courses.length > 0 ? (
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Course ID</Table.HeaderCell>
+                <Table.HeaderCell>Course Name</Table.HeaderCell>
+                <Table.HeaderCell>Select</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {courses.map((course) => (
+                <Table.Row key={course.CourseID}>
+                  <Table.Cell>{course.CourseID}</Table.Cell>
+                  <Table.Cell>{course.CourseName}</Table.Cell>
+                  <Table.Cell>
+                    <Checkbox
+                      checked={selectedCourses.includes(course.CourseID)}
+                      onChange={() => handleCourseSelection(course.CourseID)}
+                    />
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        ) : (
+          <p>No courses available or loading...</p>
+        )}
 
-      {/* Message */}
-      {message && <p style={{ marginTop: "20px", color: "blue" }}>{message}</p>}
+        <Button
+          positive
+          onClick={handleRegistration}
+          style={{ marginTop: "20px" }}
+        >
+          Register
+        </Button>
+      </Segment>
 
-      <div>
-        <button onClick={handleViewCourses}>View Registerd Courses</button>
-      </div>
-      <div>
-        <button onClick={handlerBackHome}>Back to Login</button>
-      </div>
-    </div>
+      <Segment>
+        <Button color="teal" onClick={handleViewCourses}>
+          View Registered Courses
+        </Button>
+        <Button secondary onClick={handleBackHome} style={{ marginLeft: "10px" }}>
+          Back to Login
+        </Button>
+      </Segment>
+    </Container>
   );
 };
 

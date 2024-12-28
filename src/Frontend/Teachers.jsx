@@ -271,7 +271,7 @@ const Teachers = () => {
 
         </Segment>
 
-        <Segment>
+        <Segment textAlign="center">
         
             <Button  color="teal" onClick={() => addCourseHandler()}>Add Course</Button>
             
