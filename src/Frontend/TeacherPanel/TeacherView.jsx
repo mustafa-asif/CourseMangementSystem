@@ -98,7 +98,7 @@ const TeacherView = () => {
       {courseData.length > 0 && (
         <Segment style={{ marginTop: "20px" }}>
           <Header as="h3">Registered Courses and Students</Header>
-          <Table celled  striped responsive>
+          <Table celled striped responsive>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Student ID</Table.HeaderCell>

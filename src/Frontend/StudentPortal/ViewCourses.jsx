@@ -107,7 +107,7 @@ const ViewCourses = () => {
           </p>
 
           <Header as="h4">Registered Courses</Header>
-          <Table celled  striped responsive>
+          <Table celled striped responsive>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Course ID</Table.HeaderCell>
