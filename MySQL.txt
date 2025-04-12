@@ -1,0 +1,362 @@
+create database DBMSProject
+
+-- Table: Semester
+CREATE TABLE Semester (
+    SemesterID INT PRIMARY KEY,
+    SemesterName VARCHAR(50) NOT NULL
+);
+
+drop table Semester;
+
+-- Table: Program
+CREATE TABLE Program (
+    ProgID INT PRIMARY KEY,
+    ProgName VARCHAR(100) NOT NULL
+);
+
+Alter table Program
+Add Constraint FK_ProgID
+
+ Alter table Semester
+ADD Constraint FK_SemID
+
+-- Table: Course
+CREATE TABLE Course (
+    CourseID INT PRIMARY KEY,
+    CourseName VARCHAR(100) NOT NULL,
+    CreditHrTh int  NOT NULL,
+    CreditHrLab int  NOT NULL,
+    ProgID INT NOT NULL,
+    SemID INT NOT NULL
+);
+Drop table Course;
+Alter Table Course
+Alter column TeacherID  int NOT NULL;
+
+Alter Table Course
+Drop Constraint Fk_TeacherID
+
+
+Alter table Course
+ADD  TeacherID INT ;
+
+SELECT * FROM Course;
+
+Alter Table Course
+ADD  TeacherID int;
+
+Alter Table Course
+ADD CONSTRAINT Fk_TeacherID
+Foreign key(TeacherID) references Teacher(TeacherID)
+
+Alter column CreditHrTh
+drop NOT NULL
+
+ALTER TABLE Course Alter column SemID int;
+
+
+ALTER TABLE Course
+ADD CONSTRAINT FK_ProgID
+FOREIGN KEY (ProgID) REFERENCES Program(ProgID);
+
+Alter Table Teacher
+Drop Constraint FK_ProgID
+
+ALTER TABLE Course
+ADD CONSTRAINT FK_SemID
+FOREIGN KEY (SemID) REFERENCES Semester(SemesterID);
+
+
+
+-- Table: Student
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY,
+    StudentName VARCHAR(100) NOT NULL,
+    DOB DATE NOT NULL,
+    Address VARCHAR(255),
+    Phone VARCHAR(15),
+    CourseID INT NOT NULL,
+    ProgID INT NOT NULL,
+    SemID INT NOT NULL,
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
+    FOREIGN KEY (ProgID) REFERENCES Program(ProgID),
+    FOREIGN KEY (SemID) REFERENCES Semester(SemesterID)
+);
+
+Alter Table Student
+Drop Constraint FK__Student__CourseI__440B1D61;
+
+Alter Table Student
+Drop column CourseID;
+
+--StudentRegisterCourses
+
+Create Table StudentCourse(
+StuCourseID int identity(1,1) primary key,
+StudentID int not null,
+CourseID int not null,
+ FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
+  FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+  
+)
+
+Drop Table StudentCourse;
+
+Select * from StudentCourse;
+
+-- Table: Teacher
+CREATE TABLE Teacher (
+    TeacherID INT PRIMARY KEY,
+    TeacherName VARCHAR(100) NOT NULL,
+    DOJ DATE NOT NULL,
+    Status VARCHAR(50) NOT NULL,
+    Salary DECIMAL(10, 2) NOT NULL,
+    Job VARCHAR(100),
+    CourseID INT NOT NULL,
+	ProgID INT NOT NULL,
+	SemID INT NOT NULL,
+    FOREIGN KEY (CourseID) REFERENCES Course(CourseID),
+    FOREIGN KEY (ProgID) REFERENCES Program(ProgID),
+    FOREIGN KEY (SemID) REFERENCES Semester(SemesterID)
+
+);
+ drop table Teacher
+Alter table Teacher
+add  ProgID int not null
+ADD CONSTRAINT FK_ProgID
+Foreign key (ProgID) references Program(ProgID);
+
+;
+
+Alter table Teacher
+
+Foreign key (SemID) references Semester(SemsterID);
+
+;
+add  SemID int not null
+
+
+Select* From Semester;
+
+insert into Course
+values (10,'jajaja',1,0,2,3)
+
+insert into Semester(SemesterID,SemesterName)
+Values (3,'2nd semester')
+
+
+select c.CourseID,c.CourseName ,t.TeacherName,t.Job,SemesterName,ProgName
+from Course c 
+inner join Semester on c.SemID=Semester.SemesterID
+inner join Program on c.ProgID=Program.ProgID
+inner join Teacher t on c.CourseID=t.CourseID;
+
+
+select * from Course
+
+  SELECT 
+            Student.StudentID, 
+            Student.StudentName AS StudentName,
+            Course.CourseID, 
+            Course.CourseName AS CourseName,
+            Course.CreditHrTh, 
+            Course.CreditHrLab,
+            Program.ProgName,
+            Semester.SemesterName
+        FROM 
+            Student
+        INNER JOIN 
+            StudentCourse ON Student.StudentID = StudentCourse.StudentID
+        INNER JOIN 
+            Course ON StudentCourse.CourseID = Course.CourseID
+        INNER JOIN
+            Program ON Course.ProgID = Program.ProgID
+        INNER JOIN
+            Semester ON Course.SemID = Semester.SemesterID
+        
+        ORDER BY Student.StudentID
+
+
+		    SELECT 
+                S.StudentID, 
+                S.StudentName AS StudentName,
+                C.CourseID, 
+                C.CourseName AS CourseName,
+                SEM.SemesterName,
+                P.ProgName
+            FROM 
+                Student S
+            INNER JOIN StudentCourse SC ON S.StudentID = SC.StudentID
+            INNER JOIN Course C ON SC.CourseID = C.CourseID
+            INNER JOIN Teacher T ON C.CourseID = T.CourseID
+            INNER JOIN Semester SEM ON T.SemID = SEM.SemesterID
+            INNER JOIN Program P ON T.ProgID = P.ProgID
+            WHERE 
+                T.TeacherID = 2
+            ORDER BY S.StudentID
+
+
+			SELECT CourseID, CourseName,Course.ProgID
+         FROM 
+         Course
+         INNER JOIN 
+         Student ON Student.ProgID = Course.ProgID 
+		 where Student.StudentID=2;
+
+
+
+
+		 
+-- Course Table
+SELECT * INTO CourseCopy
+FROM Course
+WHERE 1 = 0;
+
+ALTER TABLE CourseCopy
+ADD AuditAction NVARCHAR(100),
+    AuditTimestamp DATETIME;
+
+CREATE TRIGGER triggerCourseBackup
+ON Course
+FOR INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Insert Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND NOT EXISTS (SELECT * FROM deleted)
+    BEGIN
+        INSERT INTO CourseCopy (CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, 'INSERT', GETDATE()
+        FROM inserted;
+    END
+
+    -- Delete Trigger Logic
+    IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted)
+    BEGIN
+        INSERT INTO CourseCopy (CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, 'DELETE', GETDATE()
+        FROM deleted;
+    END
+
+    -- Update Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+    BEGIN
+        -- Record Old Values (for UPDATE)
+        INSERT INTO CourseCopy (CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID,'UPDATE_OLD', GETDATE()
+        FROM deleted;
+
+        -- Record New Values (for UPDATE)
+        INSERT INTO CourseCopy (CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID,AuditAction, AuditTimestamp)
+        SELECT CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID, 'UPDATE_NEW', GETDATE()
+        FROM inserted;
+    END
+END;
+
+SELECT * FROM Course;
+SELECT * FROM CourseCopy;
+
+-- Student Table
+SELECT * INTO StudentCopy
+FROM Student
+WHERE 1 = 0;
+
+ALTER TABLE StudentCopy
+ADD AuditAction NVARCHAR(100),
+    AuditTimestamp DATETIME;
+
+CREATE TRIGGER triggerStudentBackups
+ON Student
+FOR INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Insert Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND NOT EXISTS (SELECT * FROM deleted)
+    BEGIN
+        INSERT INTO dbo.StudentCopy (StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, 'INSERT', GETDATE()
+        FROM inserted;
+    END
+
+    -- Delete Trigger Logic
+    IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted)
+    BEGIN
+        INSERT INTO dbo.StudentCopy (StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, 'DELETE', GETDATE()
+        FROM deleted;
+    END
+
+    -- Update Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+    BEGIN
+        -- Record Old Values
+        INSERT INTO dbo.StudentCopy (StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, 'UPDATE_OLD', GETDATE()
+        FROM deleted;
+
+        -- Record New Values
+        INSERT INTO dbo.StudentCopy (StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, AuditAction, AuditTimestamp)
+        SELECT StudentID, StudentName, DOB, Address, Phone, ProgID, SemID, 'UPDATE_NEW', GETDATE()
+        FROM inserted;
+    END
+END;
+
+SELECT * FROM Student;
+SELECT * FROM StudentCopy;
+
+-- Teacher Table
+SELECT * INTO TeacherCopy
+FROM Teacher
+WHERE 1 = 0;
+
+ALTER TABLE TeacherCopy
+ADD AuditAction NVARCHAR(100),
+    AuditTimestamp DATETIME;
+CREATE TRIGGER triggerTeacherBackup
+ON Teacher
+FOR INSERT, UPDATE, DELETE
+AS
+BEGIN
+    -- Insert Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND NOT EXISTS (SELECT * FROM deleted)
+    BEGIN
+        INSERT INTO dbo.TeacherCopy (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, AuditAction, AuditTimestamp)
+        SELECT TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, 'INSERT', GETDATE()
+        FROM inserted;
+    END
+
+    -- Delete Trigger Logic
+    IF EXISTS (SELECT * FROM deleted) AND NOT EXISTS (SELECT * FROM inserted)
+    BEGIN
+        INSERT INTO dbo.TeacherCopy (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, AuditAction, AuditTimestamp)
+        SELECT TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, 'DELETE', GETDATE()
+        FROM deleted;
+    END
+
+    -- Update Trigger Logic
+    IF EXISTS (SELECT * FROM inserted) AND EXISTS (SELECT * FROM deleted)
+    BEGIN
+        -- Record Old Values
+        INSERT INTO dbo.TeacherCopy (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, AuditAction, AuditTimestamp)
+        SELECT TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, 'UPDATE_OLD', GETDATE()
+        FROM deleted;
+
+        -- Record New Values
+        INSERT INTO dbo.TeacherCopy (TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, AuditAction, AuditTimestamp)
+        SELECT TeacherID, TeacherName, DOJ, Status, Salary, Job, CourseID, SemID, ProgID, 'UPDATE_NEW', GETDATE()
+        FROM inserted;
+    END
+END;
+
+SELECT * FROM TeacherCopy;
+SELECT * FROM Teacher
+
+select * from Course;
+
+create view abc
+as 
+select CourseID, CourseName, CreditHrTh, CreditHrLab, ProgID, SemID 
+from Course 
+where CourseID = 1;
+select * from abc
+
+
