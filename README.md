@@ -24,18 +24,19 @@ A full-stack course management system built with React (frontend) and Flask (bac
 
    
    git clone https://github.com/mustafa-asif/CourseMangementSystem.git
+   
    cd CourseMangementSystem
    
 
 
-2. Install frontend dependencies:
+3. Install frontend dependencies:
 
    
    npm install
    
 
 
-3. Set up the MySQL database:
+4. Set up the MySQL database:
 
    - Create a new MySQL database.
    - Import the provided SQL schema and data:
@@ -43,19 +44,19 @@ A full-stack course management system built with React (frontend) and Flask (bac
    
    - This files contain the necessary table structures and sample data.
 
-4. Configure the Flask backend:
+5. Configure the Flask backend:
 
    - Open the Flask backend file ( Api.py).
    - Update the MySQL connection settings with your server name, username, password, and database name.
 
-5. Run the Flask backend server:
+6. Run the Flask backend server:
 
    
    python src\ backend\ Api.py
    
 
 
-6. Start the React frontend:
+7. Start the React frontend:
 
    
    npm start
